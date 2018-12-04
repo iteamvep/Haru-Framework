@@ -1,0 +1,17 @@
+
+version = '0.1.0'
+group 'org.iharu'
+
+jar {
+    enabled = true
+    baseName = 'base-support'
+//    classifier = ''
+    manifest {
+//        attributes 'Implementation-Title': 'Gradle Quickstart', 'Implementation-Version': version
+    }
+}
+
+dependencies {
+    compileOnly group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.1'
+    compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.0'
+}
