@@ -10,7 +10,7 @@ import org.iharu.type.ResultType;
 
 /**
  *
- * @author iTeamVEP
+ * @author iHaru
  */
 public class HttpUtils {
     

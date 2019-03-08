@@ -7,7 +7,7 @@ package org.iharu.cache.ehcache;
 
 /**
  *
- * @author iTeamVEP
+ * @author iHaru
  */
 public class EhCacheConfigs {
         /**

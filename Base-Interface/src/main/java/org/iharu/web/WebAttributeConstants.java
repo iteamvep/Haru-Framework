@@ -8,7 +8,7 @@ package org.iharu.web;
 
 /**
  *
- * @author iTeamVEP
+ * @author iHaru
  */
 public class WebAttributeConstants {
     public static final int APP_AUTH_ERROR_CODE = 89;

@@ -10,9 +10,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.tools.zip.ZipEntry;  
-import org.apache.tools.zip.ZipOutputStream;  
+//import org.apache.tools.zip.ZipEntry;  
+//import org.apache.tools.zip.ZipOutputStream;  
 import org.slf4j.LoggerFactory;
 
 /**
@@ -36,8 +40,7 @@ public class ZipCompressorUtils {
         }
         try {  
             fos = new FileOutputStream(destFolder+File.separator+zipName);  
-            zos = new ZipOutputStream(fos);  
-            zos.setEncoding("utf-8");//此处修改字节码方式。  
+            zos = new ZipOutputStream(fos, StandardCharsets.UTF_8);  
             //createXmlFile(sourcePath,"293.xml");  
             writeZip(new File(sourcePath), "", zos);  
         } catch (FileNotFoundException e) { 

@@ -25,7 +25,7 @@ import org.iharu.type.error.ErrorType;
 
 /**
  *
- * @author iTeamVEP
+ * @author iHaru
  */
 public class EhCacheUtils {
 

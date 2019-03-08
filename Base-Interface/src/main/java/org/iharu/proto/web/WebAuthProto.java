@@ -9,7 +9,7 @@ import org.iharu.type.BaseAuthorizationType;
 
 /**
  *
- * @author iTeamVEP
+ * @author iHaru
  */
 public class WebAuthProto {
     private String voucher;

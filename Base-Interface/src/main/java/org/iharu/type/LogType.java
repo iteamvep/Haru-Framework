@@ -7,9 +7,10 @@ package org.iharu.type;
 
 /**
  *
- * @author iTeamVEP
+ * @author iHaru
  */
 public enum LogType {
+    UNKNOWN(),
     TRACE(),
     DEBUG(),
     INFO(),

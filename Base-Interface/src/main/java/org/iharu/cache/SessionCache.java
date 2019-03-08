@@ -15,7 +15,7 @@ import org.iharu.cache.ehcache.EhCacheUtils;
 
 /**
  *
- * @author iTeamVEP
+ * @author iHaru
  */
 public class SessionCache {
     public static Cache<String, String> sessionTokenCache;

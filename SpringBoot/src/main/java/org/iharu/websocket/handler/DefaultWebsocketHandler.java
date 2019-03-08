@@ -10,7 +10,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.iharu.authorization.util.AuthorizationUtils;
 import org.iharu.proto.websocket.WebsocketProto;
+import org.iharu.type.BaseAuthorizationType;
 import org.iharu.type.ResultType;
 import org.iharu.type.websocket.WebsocketMessageType;
 import org.iharu.type.websocket.WebsocketSystemMessageType;
@@ -32,7 +34,7 @@ public abstract class DefaultWebsocketHandler extends TextWebSocketHandler {
     
     //在线用户列表
     private static final Map<String, WebSocketSession> USERS = new ConcurrentHashMap();
-    private static final String SESSION_DATA = WebAttributeConstants.SESSION_DATA;
+    protected static final String SESSION_DATA = WebAttributeConstants.SESSION_DATA;
 
     /**
      * 连接已关闭，移除在Map集合中的记录
@@ -42,7 +44,7 @@ public abstract class DefaultWebsocketHandler extends TextWebSocketHandler {
      */
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        USERS.remove(getUserUid(session));
+        handleClose(session);
     }
 
     @Override
@@ -50,7 +52,7 @@ public abstract class DefaultWebsocketHandler extends TextWebSocketHandler {
         if (session.isOpen()) {
             session.close();
         }
-        USERS.remove(getUserUid(session));
+        handleClose(session);
         LOG.error(ExceptionUtils.getStackTrace(exception));
     }
 
@@ -61,7 +63,6 @@ public abstract class DefaultWebsocketHandler extends TextWebSocketHandler {
      */
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        System.out.println("成功建立连接");
         String userId = getUserUid(session);
         LOG.debug("user: {} connected.", userId);
         if (userId != null) {
@@ -77,7 +78,7 @@ public abstract class DefaultWebsocketHandler extends TextWebSocketHandler {
      * @throws java.lang.Exception
      */
     @Override
-    abstract protected void handleTextMessage(WebSocketSession session, TextMessage message);
+    abstract protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception;
 
      /**
      * 发送信息给指定用户
@@ -131,23 +132,35 @@ public abstract class DefaultWebsocketHandler extends TextWebSocketHandler {
      * @param session
      * @return
      */
-    private String getUserUid(WebSocketSession session) {
+    protected String getUserUid(WebSocketSession session) {
         try {
             SessionEntity sessionEntity = (SessionEntity) session.getAttributes().get(SESSION_DATA);
+            if(sessionEntity == null) {
+                sessionEntity = new SessionEntity();
+                long timestamp = System.currentTimeMillis();
+                sessionEntity.setUid(session.getId());
+                sessionEntity.setValid_timestamp(timestamp);
+                session.getAttributes().put(SESSION_DATA, sessionEntity);
+            }
             return sessionEntity.getUid();
-        } catch (Exception e) {
+        } catch (Exception ex) {
+            LOG.error(ExceptionUtils.getStackTrace(ex));
             return null;
         }
     }
     
-    private TextMessage connectedMessageGen(String uid){
+    protected void handleClose(WebSocketSession session) {
+        USERS.remove(getUserUid(session));
+    }
+    
+    protected TextMessage connectedMessageGen(String uid){
         return WebsocketUtils.StandardMessageEncoder(ResultType.SUCCESS, 
                 WebsocketMessageType.SYSTEM, 
                 WebsocketSystemMessageType.SYSTEM_INFO, 
-                uid+"\t成功建立socket连接");
+                "连接服务器成功");
     }
     
-    private WebsocketProto proto2object(String userId, String proto) {
+    protected WebsocketProto proto2object(String userId, String proto) {
         try {
             WebsocketProto websocketProto = WebsocketUtils.StandardMessageDecoder(proto);
             return websocketProto;

@@ -9,26 +9,23 @@ import org.iharu.type.error.ErrorType;
 
 /**
  *
- * @author iTeamVEP
+ * @author iHaru
  */
 public class BaseException extends RuntimeException {
     
     private final ErrorType errorType;
     private String module;
-    private String msg;
-    private Throwable sourceException;
     
     public BaseException(ErrorType errorType, String module, String msg, Throwable sourceException) {
+        super(msg, sourceException);
         this.errorType = errorType;
         this.module = module;
-        this.msg = msg;
-        this.sourceException = sourceException;
     }
     
     public BaseException(ErrorType errorType, String module, String msg) {
+        super(msg);
         this.errorType = errorType;
         this.module = module;
-        this.msg = msg;
     }
     
     public BaseException(ErrorType errorType, String module) {
@@ -37,8 +34,8 @@ public class BaseException extends RuntimeException {
     }
     
     public BaseException(ErrorType errorType, Throwable sourceException) {
+        super(sourceException);
         this.errorType = errorType;
-        this.sourceException = sourceException;
     }
     
     public BaseException(ErrorType errorType) {
@@ -50,20 +47,6 @@ public class BaseException extends RuntimeException {
      */
     public ErrorType getErrorType() {
         return errorType;
-    }
-
-    /**
-     * @return the msg
-     */
-    public String getMsg() {
-        return msg;
-    }
-
-    /**
-     * @return the sourceException
-     */
-    public Throwable getSourceException() {
-        return sourceException;
     }
 
     /**

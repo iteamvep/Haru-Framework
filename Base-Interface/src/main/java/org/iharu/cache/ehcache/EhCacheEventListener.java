@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author iTeamVEP
+ * @author iHaru
  */
 @SuppressWarnings("rawtypes")
 public class EhCacheEventListener implements CacheEventListener {

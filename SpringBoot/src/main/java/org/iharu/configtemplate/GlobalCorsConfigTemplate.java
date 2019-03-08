@@ -13,7 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  *
- * @author iTeamVEP
+ * @author iHaru
  */
 //@Configuration
 //@EnableWebMvc

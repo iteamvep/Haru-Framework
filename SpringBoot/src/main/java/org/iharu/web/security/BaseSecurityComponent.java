@@ -22,7 +22,7 @@ import org.springframework.web.util.WebUtils;
 
 /**
  *
- * @author iTeamVEP
+ * @author iHaru
  */
 @Component
 public class BaseSecurityComponent extends BaseComponent {

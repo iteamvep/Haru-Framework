@@ -7,7 +7,7 @@ package org.iharu.type.websocket;
 
 /**
  *
- * @author iTeamVEP
+ * @author iHaru
  */
 public enum WebsocketSystemMessageType {
     SYSTEM_INFO(),

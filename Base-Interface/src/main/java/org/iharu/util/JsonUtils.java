@@ -9,7 +9,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import static com.google.gson.stream.JsonToken.END_DOCUMENT;
+import com.google.gson.stream.MalformedJsonException;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import static org.iharu.util.BaseConstantValue.LINESEPARATOR;
 import org.slf4j.Logger;
@@ -44,6 +50,10 @@ public class JsonUtils<T> {
         return objectMapper.readValue(json, typeReference);
     }
     
+    public static <T> T json2object(String json, TypeReference typeReference) throws IOException {
+        return json2object(json, typeReference, null);
+    }
+    
     public static <T> T jsonnode2object(JsonNode start2Node, Class<T> clz, ObjectMapper objectMapper) throws JsonProcessingException {
         if(objectMapper == null)
             objectMapper = new ObjectMapper();
@@ -57,4 +67,53 @@ public class JsonUtils<T> {
         return objectMapper.readTree(json);
     }
     
+    public static boolean isJsonValid(final String json)
+            throws IOException {
+        return isJsonValid(new StringReader(json));
+    }
+
+    public static boolean isJsonValid(final Reader reader)
+            throws IOException {
+        return isJsonValid(new JsonReader(reader));
+    }
+
+    private static boolean isJsonValid(final JsonReader jsonReader)
+            throws IOException {
+        try {
+            JsonToken token;
+            loop:
+            while ( (token = jsonReader.peek()) != END_DOCUMENT && token != null ) {
+                switch ( token ) {
+                case BEGIN_ARRAY:
+                    jsonReader.beginArray();
+                    break;
+                case END_ARRAY:
+                    jsonReader.endArray();
+                    break;
+                case BEGIN_OBJECT:
+                    jsonReader.beginObject();
+                    break;
+                case END_OBJECT:
+                    jsonReader.endObject();
+                    break;
+                case NAME:
+                    jsonReader.nextName();
+                    break;
+                case STRING:
+                case NUMBER:
+                case BOOLEAN:
+                case NULL:
+                    jsonReader.skipValue();
+                    break;
+                case END_DOCUMENT:
+                    break loop;
+                default:
+                    throw new AssertionError(token);
+                }
+            }
+            return true;
+        } catch ( final MalformedJsonException ignored ) {
+            return false;
+        }
+    }
 }

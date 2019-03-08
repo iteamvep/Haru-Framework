@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 /**
  *
- * @author iTeamVEP
+ * @author iHaru
  */
 @Component
 public class BaseComponent {

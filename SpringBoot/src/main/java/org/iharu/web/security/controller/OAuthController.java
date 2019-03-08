@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
- * @author iTeamVEP
+ * @author iHaru
  */
 @RestController
 @RequestMapping(value = {"/oauth","/OAuth"}, produces = "application/json;charset=UTF-8")

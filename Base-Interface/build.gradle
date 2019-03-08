@@ -14,4 +14,23 @@ jar {
 dependencies {
     compileOnly group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.1'
     compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.0'
+    
+    //Commons Utils
+        compile group: 'commons-io', name: 'commons-io', version: '2.6'
+        compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
+        compile group: 'com.google.guava', name: 'guava', version: '24.1-jre'
+        
+        //Cache
+        compile group: 'org.ehcache', name: 'ehcache', version: '3.6.0'
+
+        //HttpClient
+        compile group: 'org.apache.httpcomponents.core5', name: 'httpcore5', version: '5.0-beta2'
+        compile group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.0-beta1'
+        compile group: 'org.apache.httpcomponents.client5', name: 'httpclient5-fluent', version: '5.0-beta1'
+        
+        compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.4'
+        compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.4'
+        compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.4'
+        
+        compile group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
 }

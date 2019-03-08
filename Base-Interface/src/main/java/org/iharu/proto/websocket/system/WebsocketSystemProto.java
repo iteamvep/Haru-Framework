@@ -9,7 +9,7 @@ import org.iharu.type.websocket.WebsocketSystemMessageType;
 
 /**
  *
- * @author iTeamVEP
+ * @author iHaru
  */
 public class WebsocketSystemProto<T> {
     private WebsocketSystemMessageType msg_type;

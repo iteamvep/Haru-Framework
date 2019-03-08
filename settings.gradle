@@ -1,7 +1,7 @@
 rootProject.name = 'Haru-Framework'
 
 //https://segmentfault.com/a/1190000010129596
-include 'Base-Interface','Spring','SpringBoot','SpringCloud-Server','SpringCloud-Client'
+include 'Base-Interface','Spring','SpringBoot','SpringBoot-Admin','SpringCloud-Server','SpringCloud-Client'
 
 // Find the directories containing a "build.gradle" file in the root directory
 // of the project. That is, every directory containing a "build.gradle" will

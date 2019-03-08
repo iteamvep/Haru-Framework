@@ -12,17 +12,17 @@ import org.iharu.exception.BaseException;
 import org.iharu.proto.web.WebResponseProto;
 import org.iharu.type.ResultType;
 import static org.iharu.util.BaseConstantValue.LINESEPARATOR;
-import org.iharu.web.controller.DefaultGlobalController;
 import org.iharu.web.util.HttpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+//import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  *
- * @author iTeamVEP
+ * @author iHaru
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -35,6 +35,13 @@ public class GlobalExceptionHandler {
         LOG.error("Web - CustomExceptionHandler left message： {}{}", LINESEPARATOR, ExceptionUtils.getStackTrace(ex));
         return HttpUtils.StandardResponseGen(ResultType.ERROR, "服务器内部发生错误");
     }
+   
+//   @ExceptionHandler(AccessDeniedException.class) 
+//   @ResponseBody
+//   public WebResponseProto AccessDeniedExceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception ex) {
+//        LOG.error("Web - AccessDeniedExceptionHandler left message： {}{}", LINESEPARATOR, request.getSession().getId());
+//        return HttpUtils.AuthorityInsufficient();
+//    }
    
    //其他未处理的异常
    @ExceptionHandler(Exception.class)

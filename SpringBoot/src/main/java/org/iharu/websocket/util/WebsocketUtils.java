@@ -17,7 +17,7 @@ import org.springframework.web.socket.TextMessage;
 
 /**
  *
- * @author iTeamVEP
+ * @author iHaru
  */
 public class WebsocketUtils {
     

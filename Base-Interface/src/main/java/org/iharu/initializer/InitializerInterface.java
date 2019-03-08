@@ -7,7 +7,7 @@ package org.iharu.initializer;
 
 /**
  *
- * @author iTeamVEP
+ * @author iHaru
  */
 public interface InitializerInterface {
     public void initMethod();

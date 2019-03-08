@@ -10,7 +10,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 
 /**
  *
- * @author iTeamVEP
+ * @author iHaru
  */
 public interface AspectInterface {
     public void pointCut();

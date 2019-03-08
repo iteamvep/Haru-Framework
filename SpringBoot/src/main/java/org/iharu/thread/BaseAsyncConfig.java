@@ -16,13 +16,18 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  *
  * @author x5171
  */
-@Configuration
-@EnableAsync
-public class SpringAsyncConfig implements AsyncConfigurer {
+public class BaseAsyncConfig implements AsyncConfigurer {
+    
+    protected int corePoolSize = 10;
+    protected int maxPoolSize = 50;
+    protected int queueCapacity = 10;
     
     @Override
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(corePoolSize);
+        executor.setMaxPoolSize(maxPoolSize);
+        executor.setQueueCapacity(queueCapacity);
         executor.setThreadNamePrefix("HaruBootstrap Executor-");
         executor.initialize();
         return executor;
@@ -30,6 +35,6 @@ public class SpringAsyncConfig implements AsyncConfigurer {
 
     @Override
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-        return new AsyncExceptionHandler();
+        return new BaseAsyncExceptionHandler();
     }
 }

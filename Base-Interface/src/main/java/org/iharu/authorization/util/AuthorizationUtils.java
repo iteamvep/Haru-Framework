@@ -6,22 +6,21 @@
 package org.iharu.authorization.util;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.Base64;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  *
- * @author iTeamVEP
+ * @author iHaru
  */
 public class AuthorizationUtils {
     private static final String CHARSET = "UTF8";
@@ -45,7 +44,7 @@ public class AuthorizationUtils {
         MessageDigest md;  
         try {
             md = MessageDigest.getInstance("md5");
-            return Base64.getEncoder().encodeToString(md.digest(baseStr.getBytes()));
+            return Base64.encodeBase64URLSafeString(md.digest(baseStr.getBytes()));
         } catch (NoSuchAlgorithmException ex) {
             return null;
         }
@@ -67,7 +66,7 @@ public class AuthorizationUtils {
             final Mac mac = Mac.getInstance(_keySpec);
             mac.init(secretKey);
             final byte[] signatureBytes = mac.doFinal(signatureBaseBytes);
-            return Base64.getEncoder().encodeToString(signatureBytes);
+            return Base64.encodeBase64String(signatureBytes);
         } catch (InvalidKeyException | NoSuchAlgorithmException | UnsupportedEncodingException e) {
             return "";
         }

@@ -7,7 +7,7 @@ package org.iharu.type;
 
 /**
  *
- * @author iTeamVEP
+ * @author iHaru
  */
 public enum BaseAuthorizationType {
     GUEST(),

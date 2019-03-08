@@ -10,7 +10,7 @@ import org.iharu.type.websocket.WebsocketMessageType;
 
 /**
  *
- * @author iTeamVEP
+ * @author iHaru
  */
 public class WebsocketProto<T> {
     
