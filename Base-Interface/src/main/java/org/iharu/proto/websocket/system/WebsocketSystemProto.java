@@ -14,6 +14,13 @@ import org.iharu.type.websocket.WebsocketSystemMessageType;
 public class WebsocketSystemProto<T> {
     private WebsocketSystemMessageType msg_type;
     private T data;
+    
+    public WebsocketSystemProto(){}
+    
+    public WebsocketSystemProto (WebsocketSystemMessageType msg_type, T data) {
+        this.msg_type = msg_type;
+        this.data = data;
+    }
 
     /**
      * @return the msg_type

@@ -7,19 +7,17 @@ package org.iharu.websocket.handler;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.iharu.authorization.util.AuthorizationUtils;
 import org.iharu.proto.websocket.WebsocketProto;
-import org.iharu.type.BaseAuthorizationType;
 import org.iharu.type.ResultType;
-import org.iharu.type.websocket.WebsocketMessageType;
 import org.iharu.type.websocket.WebsocketSystemMessageType;
+import org.iharu.util.JsonUtils;
 import org.iharu.web.WebAttributeConstants;
 import org.iharu.web.session.entity.SessionEntity;
 import org.iharu.websocket.util.WebsocketUtils;
-import org.slf4j.LoggerFactory;
+import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -27,15 +25,17 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 /**
  *
- * @author x5171
+ * @author iHaru
+ * https://blog.csdn.net/Veggiel/article/details/52300093
  */
 public abstract class DefaultWebsocketHandler extends TextWebSocketHandler {
-    static final org.slf4j.Logger LOG = LoggerFactory.getLogger(DefaultWebsocketHandler.class);
     
     //在线用户列表
-    private static final Map<String, WebSocketSession> USERS = new ConcurrentHashMap();
+    protected final Map<String, WebSocketSession> USERS = new ConcurrentHashMap();
     protected static final String SESSION_DATA = WebAttributeConstants.SESSION_DATA;
 
+    abstract protected org.slf4j.Logger getImplLogger();
+    
     /**
      * 连接已关闭，移除在Map集合中的记录
      * @param session
@@ -49,11 +49,8 @@ public abstract class DefaultWebsocketHandler extends TextWebSocketHandler {
 
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-        if (session.isOpen()) {
-            session.close();
-        }
         handleClose(session);
-        LOG.error(ExceptionUtils.getStackTrace(exception));
+        getImplLogger().error("handleTransportError: {}", ExceptionUtils.getStackTrace(exception));
     }
 
     /**
@@ -63,11 +60,11 @@ public abstract class DefaultWebsocketHandler extends TextWebSocketHandler {
      */
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        String userId = getUserUid(session);
-        LOG.debug("user: {} connected.", userId);
+        String userId = getUserId(session);
+        getImplLogger().debug("user: {} connected", userId);
         if (userId != null) {
             USERS.put(userId, session);
-            session.sendMessage(connectedMessageGen(userId));
+            sendMessageToUser(userId, connectedMessageGen(userId));
         }
     }
 
@@ -75,10 +72,9 @@ public abstract class DefaultWebsocketHandler extends TextWebSocketHandler {
      * 处理收到的websocket信息
      * @param session
      * @param message
-     * @throws java.lang.Exception
      */
     @Override
-    abstract protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception;
+    abstract protected void handleTextMessage(WebSocketSession session, TextMessage message);
 
      /**
      * 发送信息给指定用户
@@ -86,7 +82,7 @@ public abstract class DefaultWebsocketHandler extends TextWebSocketHandler {
      * @param message
      * @return
      */
-    public boolean sendMessageToUser(String userId, TextMessage message) {
+    public boolean sendMessageToUser(String userId, WebsocketProto message) {
         if (!USERS.containsKey(userId)) {
             return false;
         }
@@ -96,35 +92,78 @@ public abstract class DefaultWebsocketHandler extends TextWebSocketHandler {
             return false;
         }
         try {
-            session.sendMessage(message);
+            session.sendMessage(new TextMessage(JsonUtils.object2json(message)));
             return true;
         } catch (IOException e) {
-            LOG.error(ExceptionUtils.getStackTrace(e));
+            getImplLogger().error("user: {}, send message failed. {}", userId, ExceptionUtils.getStackTrace(e));
+        }
+        return false;
+    }
+    
+    /**
+     * 发送信息给指定用户
+     * @param userId
+     * @param message
+     * @return
+     */
+    public boolean sendMessageToUser(String userId, byte[] payload) {
+        if (!USERS.containsKey(userId)) {
+            return false;
+        }
+        WebSocketSession session = USERS.get(userId);
+
+        if (!session.isOpen()) {
+            return false;
+        }
+        try {
+            session.sendMessage(new BinaryMessage(payload));
+            return true;
+        } catch (IOException e) {
+            getImplLogger().error("user: {}, send message failed. {}", userId, ExceptionUtils.getStackTrace(e));
         }
         return false;
     }
 
     /**
      * 广播信息
-     * @param message
+     * @param websocketProto
      * @return
      */
-    public boolean sendMessageToAllUsers(TextMessage message) {
-        boolean allSendSuccess = true;
-        Set<String> userIds = USERS.keySet();
-        WebSocketSession session;
-        for (String userId : userIds) {
+    public boolean sendMessageToAllUsers(WebsocketProto websocketProto) {
+        AtomicBoolean allSendSuccess = new AtomicBoolean(true);
+        TextMessage message = new TextMessage(JsonUtils.object2json(websocketProto));
+        USERS.forEach((uid, session) -> {
             try {
-                session = USERS.get(userId);
                 if (session.isOpen()) {
                     session.sendMessage(message);
                 }
             } catch (IOException e) {
-                LOG.error(ExceptionUtils.getStackTrace(e));
-                allSendSuccess = false;
+                getImplLogger().error("user: {}, send message failed. {}", uid, ExceptionUtils.getStackTrace(e));
+                allSendSuccess.set(false);
             }
-        }
-        return  allSendSuccess;
+        });
+        return  allSendSuccess.get();
+    }
+
+    /**
+     * 广播信息
+     * @param websocketProto
+     * @return
+     */
+    public boolean sendMessageToAllUsers(byte[] payload) {
+        AtomicBoolean allSendSuccess = new AtomicBoolean(true);
+        BinaryMessage message = new BinaryMessage(payload);
+        USERS.forEach((uid, session) -> {
+            try {
+                if (session.isOpen()) {
+                    session.sendMessage(message);
+                }
+            } catch (IOException e) {
+                getImplLogger().error("user: {}, send message failed. {}", uid, ExceptionUtils.getStackTrace(e));
+                allSendSuccess.set(false);
+            }
+        });
+        return  allSendSuccess.get();
     }
 
      /**
@@ -132,46 +171,52 @@ public abstract class DefaultWebsocketHandler extends TextWebSocketHandler {
      * @param session
      * @return
      */
-    protected String getUserUid(WebSocketSession session) {
+    protected String getUserId(WebSocketSession session) {
         try {
             SessionEntity sessionEntity = (SessionEntity) session.getAttributes().get(SESSION_DATA);
-            if(sessionEntity == null) {
-                sessionEntity = new SessionEntity();
-                long timestamp = System.currentTimeMillis();
-                sessionEntity.setUid(session.getId());
-                sessionEntity.setValid_timestamp(timestamp);
-                session.getAttributes().put(SESSION_DATA, sessionEntity);
-            }
-            return sessionEntity.getUid();
+            if(sessionEntity != null)
+                return sessionEntity.getUid();
         } catch (Exception ex) {
-            LOG.error(ExceptionUtils.getStackTrace(ex));
-            return null;
+            getImplLogger().error("getUserId: {}", ExceptionUtils.getStackTrace(ex));
         }
+        return session.getId();
     }
     
     protected void handleClose(WebSocketSession session) {
-        USERS.remove(getUserUid(session));
+        USERS.remove(getUserId(session));
+        try {
+            if(session.isOpen())
+                session.close();
+        } catch (IOException ex) {
+            getImplLogger().error("handleClose: {}", ExceptionUtils.getStackTrace(ex));
+        }
     }
     
-    protected TextMessage connectedMessageGen(String uid){
-        return WebsocketUtils.StandardMessageEncoder(ResultType.SUCCESS, 
-                WebsocketMessageType.SYSTEM, 
+    protected WebsocketProto connectedMessageGen(String uid){
+        return WebsocketUtils.SystemMessageEncoder(ResultType.SUCCESS, 
                 WebsocketSystemMessageType.SYSTEM_INFO, 
                 "连接服务器成功");
     }
     
+    protected WebsocketProto proto2object(WebSocketSession session, TextMessage message) {
+        return proto2object(getUserId(session), message.getPayload());
+    }
+    
+    protected WebsocketProto proto2object(WebSocketSession session, String proto) {
+        return proto2object(getUserId(session), proto);
+    }
+    
     protected WebsocketProto proto2object(String userId, String proto) {
         try {
-            WebsocketProto websocketProto = WebsocketUtils.StandardMessageDecoder(proto);
-            return websocketProto;
+            return WebsocketUtils.MessageDecoder(proto);
         } catch (IOException ex) {
-            LOG.error("user: {}, decode proto failed. proto: {}", userId, proto);
-            TextMessage msg = WebsocketUtils.StandardMessageEncoder(ResultType.FAIL, 
-                WebsocketMessageType.SYSTEM, 
+            getImplLogger().error("user: {}, decode proto failed. proto: {}", userId, proto);
+            WebsocketProto websocketProto = WebsocketUtils.SystemMessageEncoder(ResultType.FAIL, 
                 WebsocketSystemMessageType.PAYLOAD_ERROR, 
                 proto);
-            sendMessageToUser(userId, msg);
+            sendMessageToUser(userId, websocketProto);
         }
         return null;
     }
+    
 }

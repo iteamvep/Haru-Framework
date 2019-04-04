@@ -43,10 +43,18 @@ public class JsonUtils<T> {
         return null;
     }
     
+    public static <T> String object2json(T obj){
+        return object2json(obj, null);
+    }
+    
     public static <T> T json2object(String json, TypeReference typeReference, ObjectMapper objectMapper) throws IOException {
         if(objectMapper == null)
             objectMapper = new ObjectMapper();
 //        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        if(!isJsonValid(json)){
+            LOG.info("JsonValid failed.");
+            return null;
+        }
         return objectMapper.readValue(json, typeReference);
     }
     
@@ -59,6 +67,10 @@ public class JsonUtils<T> {
             objectMapper = new ObjectMapper();
 //        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         return objectMapper.treeToValue(start2Node, clz);
+    }
+    
+    public static JsonNode json2jsonnode(String json) throws IOException {
+        return json2jsonnode(json, null);
     }
     
     public static JsonNode json2jsonnode(String json, ObjectMapper objectMapper) throws IOException {

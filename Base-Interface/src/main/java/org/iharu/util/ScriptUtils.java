@@ -87,7 +87,7 @@ public class ScriptUtils {
                 String scriptPath = (String) scriptObject;
                 HttpURLConnection conn = null;
                 if(scriptPath.startsWith("http")){
-//                    Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 1080));
+//                    Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 8888));
                     try { 
                         conn = (HttpURLConnection) new URL(scriptPath).openConnection();
                         conn.setConnectTimeout(3*1000); 

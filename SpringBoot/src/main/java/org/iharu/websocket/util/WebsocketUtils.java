@@ -7,7 +7,9 @@ package org.iharu.websocket.util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
+import org.apache.commons.lang3.StringUtils;
 import org.iharu.proto.websocket.WebsocketProto;
+import org.iharu.proto.websocket.nonsystem.WebsocketNonSystemProto;
 import org.iharu.proto.websocket.system.WebsocketSystemProto;
 import org.iharu.type.ResultType;
 import org.iharu.type.websocket.WebsocketMessageType;
@@ -21,21 +23,24 @@ import org.springframework.web.socket.TextMessage;
  */
 public class WebsocketUtils {
     
-    public static <T> TextMessage StandardMessageEncoder(ResultType resultType, 
-            WebsocketMessageType messageType, 
-            WebsocketSystemMessageType systemMessageType, 
-            T data) {
-        WebsocketProto websocketProto = new WebsocketProto();
-        websocketProto.setProto_code(resultType);
-        websocketProto.setProto_type(messageType);
-        WebsocketSystemProto websocketSystemProto = new WebsocketSystemProto();
-        websocketSystemProto.setMsg_type(systemMessageType);
-        websocketSystemProto.setData(data);
-        return new TextMessage(JsonUtils.object2json(websocketSystemProto, null));
+    public static <T> WebsocketProto SystemMessageEncoder(ResultType resultType, WebsocketSystemMessageType systemMessageType, T data) {
+        return new WebsocketProto(WebsocketMessageType.SYSTEM, resultType, new WebsocketSystemProto(systemMessageType, data));
     }
     
-    public static WebsocketProto StandardMessageDecoder(String proto) throws IOException{
-        return JsonUtils.json2object(proto, new TypeReference<WebsocketProto>(){}, null);
+    public static <T> WebsocketProto NonSystemMessageEncoder(ResultType resultType, String module, T data) {
+        if(StringUtils.isBlank(module)){
+            return new WebsocketProto(WebsocketMessageType.NON_SYSTEM, resultType, data);
+        } else {
+            return new WebsocketProto(WebsocketMessageType.NON_SYSTEM, resultType, new WebsocketNonSystemProto(module, data));
+        }
+    }
+    
+    public static <T> WebsocketProto NonSystemMessageEncoder(ResultType resultType, T data) {
+        return NonSystemMessageEncoder(resultType, null, data);
+    }
+    
+    public static WebsocketProto MessageDecoder(String proto) throws IOException{
+        return JsonUtils.json2object(proto, new TypeReference<WebsocketProto>(){});
     }
     
     

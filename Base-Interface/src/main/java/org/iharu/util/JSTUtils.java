@@ -15,7 +15,7 @@ import java.util.TimeZone;
  */
 public class JSTUtils {
     
-    public static Calendar getJSTCalendar() {
+    public static Calendar getTimezoneCalendar(String timezone) {
         // 1、取得本地时间：
         java.util.Calendar theCalendar = java.util.Calendar.getInstance();
         
@@ -28,8 +28,8 @@ public class JSTUtils {
         // 4、从本地时间里扣除这些差量，即可以取得UTC时间：
         theCalendar.add(java.util.Calendar.MILLISECOND, -(zoneOffset + dstOffset));
         
-        //5、加上日本时区的时差时间，即获得实际JST时间
-        theCalendar.add(java.util.Calendar.MILLISECOND, TimeZone.getTimeZone("JST").getRawOffset());
+        //5、加上时区的时差时间，即获得实际当地时间
+        theCalendar.add(java.util.Calendar.MILLISECOND, TimeZone.getTimeZone(timezone).getRawOffset());
         
         return theCalendar;
     }

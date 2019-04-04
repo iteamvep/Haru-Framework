@@ -33,7 +33,7 @@ import org.springframework.web.filter.CorsFilter;
  * http://www.spring4all.com/article/177
  * https://blog.csdn.net/jianggujin/article/details/54692470
  * https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#csrf-using
- * @author x5171
+ * @author iHaru
  */
 //@Configuration
 //@EnableWebSecurity(debug = true)

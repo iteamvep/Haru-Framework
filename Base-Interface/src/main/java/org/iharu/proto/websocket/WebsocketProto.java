@@ -16,7 +16,25 @@ public class WebsocketProto<T> {
     
     private WebsocketMessageType proto_type;
     private ResultType proto_code;
+    private long timestamp;
+    private String sign;
     private T proto_payload;
+    
+    public WebsocketProto(){}
+    
+    public WebsocketProto (WebsocketMessageType proto_type, ResultType proto_code, T proto_payload) {
+        this.proto_type = proto_type;
+        this.proto_code = proto_code;
+        this.proto_payload = proto_payload;
+    }
+    
+    public WebsocketProto (WebsocketMessageType proto_type, ResultType proto_code, T proto_payload, long timestamp, String sign) {
+        this.proto_type = proto_type;
+        this.proto_code = proto_code;
+        this.proto_payload = proto_payload;
+        this.timestamp = timestamp;
+        this.sign = sign;
+    }
 
     /**
      * @return the proto_type
@@ -58,6 +76,34 @@ public class WebsocketProto<T> {
      */
     public void setProto_payload(T proto_payload) {
         this.proto_payload = proto_payload;
+    }
+
+    /**
+     * @return the timestamp
+     */
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    /**
+     * @param timestamp the timestamp to set
+     */
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    /**
+     * @return the sign
+     */
+    public String getSign() {
+        return sign;
+    }
+
+    /**
+     * @param sign the sign to set
+     */
+    public void setSign(String sign) {
+        this.sign = sign;
     }
     
 }
