@@ -5,35 +5,57 @@
  */
 package org.iharu.proto.websocket;
 
+import org.iharu.proto.websocket.system.WebsocketSystemProto;
 import org.iharu.type.ResultType;
 import org.iharu.type.websocket.WebsocketMessageType;
+import org.iharu.util.JsonUtils;
 
 /**
  *
  * @author iHaru
+ * @param <T>
  */
 public class WebsocketProto<T> {
     
-    private WebsocketMessageType proto_type;
-    private ResultType proto_code;
-    private long timestamp;
-    private String sign;
-    private T proto_payload;
+    protected ResultType proto_code;
+    protected String proto_payload;
+    protected String proto_module;
+    protected WebsocketMessageType proto_type;
+    protected long timestamp;
+    protected String sign;
     
     public WebsocketProto(){}
     
-    public WebsocketProto (WebsocketMessageType proto_type, ResultType proto_code, T proto_payload) {
-        this.proto_type = proto_type;
+    public WebsocketProto (ResultType proto_code, String proto_payload) {
+        this.proto_type = WebsocketMessageType.SYSTEM;
         this.proto_code = proto_code;
         this.proto_payload = proto_payload;
     }
     
-    public WebsocketProto (WebsocketMessageType proto_type, ResultType proto_code, T proto_payload, long timestamp, String sign) {
-        this.proto_type = proto_type;
+    public WebsocketProto (ResultType proto_code, WebsocketSystemProto proto_payload) {
+        this.proto_type = WebsocketMessageType.SYSTEM;
         this.proto_code = proto_code;
+        this.proto_payload = JsonUtils.object2json(proto_payload);
+    }
+    
+    public WebsocketProto (String proto_payload) {
+        this.proto_type = WebsocketMessageType.SYSTEM;
+        this.proto_code = ResultType.SUCCESS;
         this.proto_payload = proto_payload;
-        this.timestamp = timestamp;
-        this.sign = sign;
+    }
+    
+    public WebsocketProto (String proto_module, ResultType proto_code, String proto_payload) {
+        this.proto_type = WebsocketMessageType.NON_SYSTEM;
+        this.proto_code = proto_code;
+        this.proto_module = proto_module;
+        this.proto_payload = proto_payload;
+    }
+    
+    public WebsocketProto (String proto_module, String proto_payload) {
+        this.proto_type = WebsocketMessageType.NON_SYSTEM;
+        this.proto_code = ResultType.SUCCESS;
+        this.proto_module = proto_module;
+        this.proto_payload = proto_payload;
     }
 
     /**
@@ -65,20 +87,6 @@ public class WebsocketProto<T> {
     }
 
     /**
-     * @return the proto_payload
-     */
-    public T getProto_payload() {
-        return proto_payload;
-    }
-
-    /**
-     * @param proto_payload the proto_payload to set
-     */
-    public void setProto_payload(T proto_payload) {
-        this.proto_payload = proto_payload;
-    }
-
-    /**
      * @return the timestamp
      */
     public long getTimestamp() {
@@ -104,6 +112,34 @@ public class WebsocketProto<T> {
      */
     public void setSign(String sign) {
         this.sign = sign;
+    }
+
+    /**
+     * @return the proto_payload
+     */
+    public String getProto_payload() {
+        return proto_payload;
+    }
+
+    /**
+     * @param proto_payload the proto_payload to set
+     */
+    public void setProto_payload(String proto_payload) {
+        this.proto_payload = proto_payload;
+    }
+
+    /**
+     * @return the proto_module
+     */
+    public String getProto_module() {
+        return proto_module;
+    }
+
+    /**
+     * @param proto_module the proto_module to set
+     */
+    public void setProto_module(String proto_module) {
+        this.proto_module = proto_module;
     }
     
 }

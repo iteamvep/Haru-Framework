@@ -35,5 +35,5 @@ dependencies {
     
     compile group: 'org.springframework.boot', name: 'spring-boot-devtools', version: $springBootVersion
     //Just for Test
-    testCompile("org.springframework.boot:spring-boot-starter-test:2.1.0.RELEASE")
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: $springBootVersion
 }

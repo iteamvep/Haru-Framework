@@ -10,14 +10,15 @@ import org.iharu.type.websocket.WebsocketSystemMessageType;
 /**
  *
  * @author iHaru
+ * @param <T>
  */
 public class WebsocketSystemProto<T> {
     private WebsocketSystemMessageType msg_type;
-    private T data;
+    private String data;
     
     public WebsocketSystemProto(){}
     
-    public WebsocketSystemProto (WebsocketSystemMessageType msg_type, T data) {
+    public WebsocketSystemProto (WebsocketSystemMessageType msg_type, String data) {
         this.msg_type = msg_type;
         this.data = data;
     }
@@ -39,14 +40,14 @@ public class WebsocketSystemProto<T> {
     /**
      * @return the data
      */
-    public T getData() {
+    public String getData() {
         return data;
     }
 
     /**
      * @param data the data to set
      */
-    public void setData(T data) {
+    public void setData(String data) {
         this.data = data;
     }
     

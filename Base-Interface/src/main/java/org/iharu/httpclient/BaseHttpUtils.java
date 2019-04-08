@@ -27,9 +27,9 @@ import org.apache.hc.client5.http.utils.DateUtils;
 import org.apache.hc.core5.http.HttpEntity;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import static org.iharu.constant.ConstantValue.FILESEPARATOR;
 import org.iharu.exception.BaseException;
 import org.iharu.type.error.ErrorType;
-import static org.iharu.util.BaseConstantValue.FILESEPARATOR;
         
 public class BaseHttpUtils {
     static final org.slf4j.Logger LOG = LoggerFactory.getLogger(BaseHttpUtils.class);

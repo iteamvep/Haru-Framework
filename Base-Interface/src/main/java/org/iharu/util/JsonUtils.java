@@ -16,8 +16,9 @@ import com.google.gson.stream.MalformedJsonException;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import static org.iharu.util.BaseConstantValue.LINESEPARATOR;
+import static org.iharu.constant.ConstantValue.LINESEPARATOR;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +63,23 @@ public class JsonUtils<T> {
         return json2object(json, typeReference, null);
     }
     
+    public static <T> T json2object(byte[] bytes, TypeReference typeReference) throws IOException {
+        return json2object(new String(bytes, StandardCharsets.UTF_8), typeReference);
+    }
+    
+    public static <T> T json2objectWithoutThrowException(String json, TypeReference typeReference) {
+        try{
+            return json2object(json, typeReference, null);
+        } catch (IOException ex) {
+            LOG.info(ExceptionUtils.getStackTrace(ex));
+            return null;
+        }
+    }
+    
+    public static <T> T json2objectWithoutThrowException(byte[] bytes, TypeReference typeReference) {
+        return json2objectWithoutThrowException(new String(bytes, StandardCharsets.UTF_8), typeReference);
+    }
+    
     public static <T> T jsonnode2object(JsonNode start2Node, Class<T> clz, ObjectMapper objectMapper) throws JsonProcessingException {
         if(objectMapper == null)
             objectMapper = new ObjectMapper();
@@ -71,6 +89,14 @@ public class JsonUtils<T> {
     
     public static JsonNode json2jsonnode(String json) throws IOException {
         return json2jsonnode(json, null);
+    }
+    
+    public static<T> byte[] object2bytes(T obj) {
+        return object2json(obj).getBytes(StandardCharsets.UTF_8);
+    }
+    
+    public static byte[] json2bytes(String json) {
+        return json.getBytes(StandardCharsets.UTF_8);
     }
     
     public static JsonNode json2jsonnode(String json, ObjectMapper objectMapper) throws IOException {

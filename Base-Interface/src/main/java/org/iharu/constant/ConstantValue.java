@@ -6,6 +6,7 @@
 package org.iharu.constant;
 
 import java.io.File;
+import java.util.UUID;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -17,12 +18,8 @@ public final class ConstantValue {
     
     public final static String LINESEPARATOR = System.getProperty("line.separator", "\n");
     public final static String FILESEPARATOR = File.separator;
-    public static final String CLASSPATH;
-    public final static String TEMP_FOLDER = 
-            String.format("%s/%s", System.getProperty("java.io.tmpdir"), "senkav2");
-    
-    public final static String SCANNAME_START2 = "Start2";
-    public final static String SCANNAME_LASTMODIFIED = "Lastmodified";
+    public final static String CLASSPATH;
+    public final static String TEMP_FOLDER = System.getProperty("java.io.tmpdir") + FILESEPARATOR + UUID.randomUUID().toString();
     
     static{
         String _CLASSPATH = Thread.currentThread().getContextClassLoader().getResource("").getPath();

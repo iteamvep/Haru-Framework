@@ -17,6 +17,19 @@ public class BaseMessageEntity<T> {
     private String msg;
     private T data;
 
+    public BaseMessageEntity(){}
+    
+    public BaseMessageEntity(BaseHttpStatus status, String msg, T data){
+        this.status = status;
+        this.msg = msg;
+        this.data = data;
+    }
+    
+    public BaseMessageEntity(BaseHttpStatus status, String msg){
+        this.status = status;
+        this.msg = msg;
+    }
+    
     /**
      * @return the status
      */

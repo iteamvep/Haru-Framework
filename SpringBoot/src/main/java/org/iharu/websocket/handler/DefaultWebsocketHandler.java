@@ -5,6 +5,7 @@
  */
 package org.iharu.websocket.handler;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,8 +28,9 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
  *
  * @author iHaru
  * https://blog.csdn.net/Veggiel/article/details/52300093
+ * @param <T>
  */
-public abstract class DefaultWebsocketHandler extends TextWebSocketHandler {
+public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
     
     //在线用户列表
     protected final Map<String, WebSocketSession> USERS = new ConcurrentHashMap();
@@ -50,6 +52,8 @@ public abstract class DefaultWebsocketHandler extends TextWebSocketHandler {
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
         handleClose(session);
+        if(exception instanceof EOFException)
+            return;
         getImplLogger().error("handleTransportError: {}", ExceptionUtils.getStackTrace(exception));
     }
 
@@ -82,7 +86,7 @@ public abstract class DefaultWebsocketHandler extends TextWebSocketHandler {
      * @param message
      * @return
      */
-    public boolean sendMessageToUser(String userId, WebsocketProto message) {
+    public<T> boolean sendMessageToUser(String userId, T message) {
         if (!USERS.containsKey(userId)) {
             return false;
         }
@@ -103,7 +107,7 @@ public abstract class DefaultWebsocketHandler extends TextWebSocketHandler {
     /**
      * 发送信息给指定用户
      * @param userId
-     * @param message
+     * @param payload
      * @return
      */
     public boolean sendMessageToUser(String userId, byte[] payload) {
@@ -126,10 +130,11 @@ public abstract class DefaultWebsocketHandler extends TextWebSocketHandler {
 
     /**
      * 广播信息
+     * @param <T>
      * @param websocketProto
      * @return
      */
-    public boolean sendMessageToAllUsers(WebsocketProto websocketProto) {
+    public <T> boolean sendMessageToAllUsers(T websocketProto) {
         AtomicBoolean allSendSuccess = new AtomicBoolean(true);
         TextMessage message = new TextMessage(JsonUtils.object2json(websocketProto));
         USERS.forEach((uid, session) -> {
@@ -147,7 +152,7 @@ public abstract class DefaultWebsocketHandler extends TextWebSocketHandler {
 
     /**
      * 广播信息
-     * @param websocketProto
+     * @param payload
      * @return
      */
     public boolean sendMessageToAllUsers(byte[] payload) {

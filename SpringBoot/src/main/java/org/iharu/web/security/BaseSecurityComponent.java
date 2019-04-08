@@ -24,7 +24,6 @@ import org.springframework.web.util.WebUtils;
  *
  * @author iHaru
  */
-@Component
 public class BaseSecurityComponent extends BaseComponent {
     private static final Logger LOG = LoggerFactory.getLogger(BaseSecurityComponent.class);
     
