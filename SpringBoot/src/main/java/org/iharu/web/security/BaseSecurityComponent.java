@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.iharu.type.ResultType;
-import org.iharu.web.BaseComponent;
+import org.iharu.web.BaseController;
 import org.iharu.web.WebAttributeConstants;
 import org.iharu.web.session.entity.SessionEntity;
 import org.iharu.web.util.HttpUtils;
@@ -24,7 +24,7 @@ import org.springframework.web.util.WebUtils;
  *
  * @author iHaru
  */
-public class BaseSecurityComponent extends BaseComponent {
+public class BaseSecurityComponent extends BaseController {
     private static final Logger LOG = LoggerFactory.getLogger(BaseSecurityComponent.class);
     
     @ModelAttribute  

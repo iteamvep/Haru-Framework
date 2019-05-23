@@ -32,11 +32,10 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
  */
 public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
     
-    //在线用户列表
-    protected final Map<String, WebSocketSession> USERS = new ConcurrentHashMap();
-    protected static final String SESSION_DATA = WebAttributeConstants.SESSION_DATA;
+    private static final String SESSION_DATA = WebAttributeConstants.SESSION_DATA;
 
-    abstract protected org.slf4j.Logger getImplLogger();
+    abstract protected org.slf4j.Logger GetImplLogger();
+    abstract protected Map<String, WebSocketSession> GetUsers();
     
     /**
      * 连接已关闭，移除在Map集合中的记录
@@ -51,10 +50,9 @@ public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
 
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-        handleClose(session);
         if(exception instanceof EOFException)
             return;
-        getImplLogger().error("handleTransportError: {}", ExceptionUtils.getStackTrace(exception));
+        GetImplLogger().error("handleTransportError: {}", ExceptionUtils.getStackTrace(exception));
     }
 
     /**
@@ -65,10 +63,12 @@ public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         String userId = getUserId(session);
-        getImplLogger().debug("user: {} connected", userId);
+        GetImplLogger().debug("user: {} connected", userId);
         if (userId != null) {
-            USERS.put(userId, session);
-            sendMessageToUser(userId, connectedMessageGen(userId));
+            registerUser(userId, session);
+            sendConnectedMsg(userId);
+        } else {
+            GetImplLogger().error("session: {} could not find userid", session);
         }
     }
 
@@ -82,15 +82,16 @@ public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
 
      /**
      * 发送信息给指定用户
+     * @param <T>
      * @param userId
      * @param message
      * @return
      */
     public<T> boolean sendMessageToUser(String userId, T message) {
-        if (!USERS.containsKey(userId)) {
+        if (!GetUsers().containsKey(userId)) {
             return false;
         }
-        WebSocketSession session = USERS.get(userId);
+        WebSocketSession session = GetUsers().get(userId);
 
         if (!session.isOpen()) {
             return false;
@@ -99,7 +100,7 @@ public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
             session.sendMessage(new TextMessage(JsonUtils.object2json(message)));
             return true;
         } catch (IOException e) {
-            getImplLogger().error("user: {}, send message failed. {}", userId, ExceptionUtils.getStackTrace(e));
+            GetImplLogger().error("user: {}, send message failed. {}", userId, ExceptionUtils.getStackTrace(e));
         }
         return false;
     }
@@ -111,10 +112,10 @@ public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
      * @return
      */
     public boolean sendMessageToUser(String userId, byte[] payload) {
-        if (!USERS.containsKey(userId)) {
+        if (!GetUsers().containsKey(userId)) {
             return false;
         }
-        WebSocketSession session = USERS.get(userId);
+        WebSocketSession session = GetUsers().get(userId);
 
         if (!session.isOpen()) {
             return false;
@@ -123,7 +124,7 @@ public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
             session.sendMessage(new BinaryMessage(payload));
             return true;
         } catch (IOException e) {
-            getImplLogger().error("user: {}, send message failed. {}", userId, ExceptionUtils.getStackTrace(e));
+            GetImplLogger().error("user: {}, send message failed. {}", userId, ExceptionUtils.getStackTrace(e));
         }
         return false;
     }
@@ -136,14 +137,21 @@ public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
      */
     public <T> boolean sendMessageToAllUsers(T websocketProto) {
         AtomicBoolean allSendSuccess = new AtomicBoolean(true);
-        TextMessage message = new TextMessage(JsonUtils.object2json(websocketProto));
-        USERS.forEach((uid, session) -> {
+        TextMessage message;
+        if(websocketProto instanceof String){
+            message = new TextMessage((String)websocketProto);
+        } else if(websocketProto instanceof Integer || websocketProto instanceof Long){
+            message = new TextMessage(String.valueOf(websocketProto));
+        } else {
+            message = new TextMessage(JsonUtils.object2json(websocketProto));
+        }
+        GetUsers().forEach((uid, session) -> {
             try {
                 if (session.isOpen()) {
                     session.sendMessage(message);
                 }
             } catch (IOException e) {
-                getImplLogger().error("user: {}, send message failed. {}", uid, ExceptionUtils.getStackTrace(e));
+                GetImplLogger().error("user: {}, send message failed. {}", uid, ExceptionUtils.getStackTrace(e));
                 allSendSuccess.set(false);
             }
         });
@@ -158,13 +166,13 @@ public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
     public boolean sendMessageToAllUsers(byte[] payload) {
         AtomicBoolean allSendSuccess = new AtomicBoolean(true);
         BinaryMessage message = new BinaryMessage(payload);
-        USERS.forEach((uid, session) -> {
+        GetUsers().forEach((uid, session) -> {
             try {
                 if (session.isOpen()) {
                     session.sendMessage(message);
                 }
             } catch (IOException e) {
-                getImplLogger().error("user: {}, send message failed. {}", uid, ExceptionUtils.getStackTrace(e));
+                GetImplLogger().error("user: {}, send message failed. {}", uid, ExceptionUtils.getStackTrace(e));
                 allSendSuccess.set(false);
             }
         });
@@ -182,25 +190,33 @@ public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
             if(sessionEntity != null)
                 return sessionEntity.getUid();
         } catch (Exception ex) {
-            getImplLogger().error("getUserId: {}", ExceptionUtils.getStackTrace(ex));
+            GetImplLogger().error("getUserId: {}", ExceptionUtils.getStackTrace(ex));
         }
         return session.getId();
     }
     
+    protected void registerUser(String userId, WebSocketSession session){
+        GetUsers().put(userId, session);
+    }
+    
+    protected void unRegisterUser(String userId){
+        GetUsers().remove(userId);
+    }
+    
     protected void handleClose(WebSocketSession session) {
-        USERS.remove(getUserId(session));
+        unRegisterUser(getUserId(session));
         try {
             if(session.isOpen())
                 session.close();
         } catch (IOException ex) {
-            getImplLogger().error("handleClose: {}", ExceptionUtils.getStackTrace(ex));
+            GetImplLogger().error("handleClose: {}", ExceptionUtils.getStackTrace(ex));
         }
     }
     
-    protected WebsocketProto connectedMessageGen(String uid){
-        return WebsocketUtils.SystemMessageEncoder(ResultType.SUCCESS, 
+    protected void sendConnectedMsg(String userId){
+        sendMessageToUser(userId, WebsocketUtils.SystemMessageEncoder(ResultType.SUCCESS, 
                 WebsocketSystemMessageType.SYSTEM_INFO, 
-                "连接服务器成功");
+                "连接服务器成功"));
     }
     
     protected WebsocketProto proto2object(WebSocketSession session, TextMessage message) {
@@ -215,7 +231,7 @@ public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
         try {
             return WebsocketUtils.MessageDecoder(proto);
         } catch (IOException ex) {
-            getImplLogger().error("user: {}, decode proto failed. proto: {}", userId, proto);
+            GetImplLogger().error("user: {}, decode proto failed. proto: {}", userId, proto);
             WebsocketProto websocketProto = WebsocketUtils.SystemMessageEncoder(ResultType.FAIL, 
                 WebsocketSystemMessageType.PAYLOAD_ERROR, 
                 proto);

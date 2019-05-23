@@ -6,6 +6,7 @@
 package org.iharu.web.util;
 
 import org.iharu.proto.web.WebResponseProto;
+import org.iharu.type.BaseHttpStatus;
 import org.iharu.type.ResultType;
 
 /**
@@ -15,24 +16,32 @@ import org.iharu.type.ResultType;
 public class HttpUtils {
     
     public static WebResponseProto AuthorityInsufficient() {
-        return StandardResponseGen(ResultType.FAIL, "Permition denied");
+        return GenResponse(BaseHttpStatus.FAILURE, "Permition denied");
     }
     
     public static WebResponseProto AuthenticationFailed() {
-        return StandardResponseGen(ResultType.FAIL, "Authentication failed");
+        return GenResponse(BaseHttpStatus.FAILURE, "Authentication failed");
     }
     
-    public static WebResponseProto StandardResponseGen(ResultType resultType, String msg) {
+    public static WebResponseProto GenResponse(BaseHttpStatus status, String msg) {
         WebResponseProto _response = new WebResponseProto();
-        _response.setResponse_code(resultType);
-        _response.setResponse_msg(msg);
+        _response.setStatus(status);
+        _response.setMsg(msg);
         return _response;
     }
     
-    public static <T> WebResponseProto CustomResponseGen(ResultType resultType, T data) {
+    public static <T> WebResponseProto GenResponse(BaseHttpStatus status, T data) {
         WebResponseProto _response = new WebResponseProto();
-        _response.setResponse_code(resultType);
-        _response.setResponse_data(data);
+        _response.setStatus(status);
+        _response.setData(data);
+        return _response;
+    }
+    
+    public static <T> WebResponseProto GenResponse(BaseHttpStatus status, String msg, T data) {
+        WebResponseProto _response = new WebResponseProto();
+        _response.setStatus(status);
+        _response.setMsg(msg);
+        _response.setData(data);
         return _response;
     }
     

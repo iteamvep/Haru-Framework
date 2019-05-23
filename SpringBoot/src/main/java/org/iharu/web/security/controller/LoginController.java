@@ -11,6 +11,7 @@ import org.iharu.cache.SessionCache;
 import org.iharu.proto.web.WebAuthProto;
 import org.iharu.proto.web.WebResponseProto;
 import org.iharu.type.BaseAuthorizationType;
+import org.iharu.type.BaseHttpStatus;
 import org.iharu.type.ResultType;
 import org.iharu.web.WebAttributeConstants;
 import org.iharu.web.security.BaseSecurityComponent;
@@ -52,7 +53,7 @@ public class LoginController extends BaseSecurityComponent {
             session.setAttribute(WebAttributeConstants.SESSION_DATA, sessionEntity);
             webAuthProto.setToken(token);
             webAuthProto.setValid_timestamp(timestamp);
-            return HttpUtils.CustomResponseGen(ResultType.SUCCESS, webAuthProto);
+            return HttpUtils.GenResponse(BaseHttpStatus.SUCCESS, webAuthProto);
         } else {
             return HttpUtils.AuthenticationFailed();
         }
@@ -74,7 +75,7 @@ public class LoginController extends BaseSecurityComponent {
             session.setAttribute(WebAttributeConstants.SESSION_DATA, sessionEntity);
             webAuthProto.setToken(token);
             webAuthProto.setValid_timestamp(timestamp);
-            return HttpUtils.CustomResponseGen(ResultType.SUCCESS, webAuthProto);
+            return HttpUtils.GenResponse(BaseHttpStatus.SUCCESS, webAuthProto);
         } else {
             return HttpUtils.AuthenticationFailed();
         }
@@ -84,12 +85,12 @@ public class LoginController extends BaseSecurityComponent {
     public WebResponseProto baseAuthentication(HttpSession session) {
         SessionEntity sessionEntity = (SessionEntity) session.getAttribute(WebAttributeConstants.SESSION_DATA);
         if(sessionEntity == null || sessionEntity.isOauth()) {
-            return HttpUtils.StandardResponseGen(ResultType.FAIL, "You have not signed in.");
+            return HttpUtils.GenResponse(BaseHttpStatus.FAILURE, "You have not signed in.");
         } else {
             if(logout(sessionEntity)){
                 session.removeAttribute(WebAttributeConstants.SESSION_DATA);
             }
-            return HttpUtils.StandardResponseGen(ResultType.SUCCESS, "Goodbye");
+            return HttpUtils.GenResponse(BaseHttpStatus.SUCCESS, "Goodbye");
         }
     }
     

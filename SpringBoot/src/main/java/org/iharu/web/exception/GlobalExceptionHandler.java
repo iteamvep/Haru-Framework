@@ -11,6 +11,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import static org.iharu.constant.ConstantValue.LINESEPARATOR;
 import org.iharu.exception.BaseException;
 import org.iharu.proto.web.WebResponseProto;
+import org.iharu.type.BaseHttpStatus;
 import org.iharu.type.ResultType;
 import org.iharu.web.util.HttpUtils;
 import org.slf4j.Logger;
@@ -33,7 +34,7 @@ public class GlobalExceptionHandler {
    @ResponseBody
    public WebResponseProto CustomExceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception ex) {
         LOG.error("Web - CustomExceptionHandler left message： {}{}", LINESEPARATOR, ExceptionUtils.getStackTrace(ex));
-        return HttpUtils.StandardResponseGen(ResultType.ERROR, "服务器内部发生错误");
+        return HttpUtils.GenResponse(BaseHttpStatus.ERROR, "服务器内部发生错误");
     }
    
 //   @ExceptionHandler(AccessDeniedException.class) 
@@ -48,7 +49,7 @@ public class GlobalExceptionHandler {
    @ResponseBody
    public Object SystemExceptionHandler(Exception ex){
       LOG.error("Web - SystemExceptionHandler left message： {}{}", LINESEPARATOR, ExceptionUtils.getStackTrace(ex));
-        return HttpUtils.StandardResponseGen(ResultType.ERROR, "服务器内部发生错误");
+        return HttpUtils.GenResponse(BaseHttpStatus.ERROR, "服务器内部发生错误");
    }
 
 }

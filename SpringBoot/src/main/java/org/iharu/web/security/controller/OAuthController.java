@@ -7,12 +7,10 @@ package org.iharu.web.security.controller;
 
 import javax.servlet.http.HttpSession;
 import org.iharu.authorization.util.AuthorizationUtils;
-import org.iharu.exception.BaseException;
 import org.iharu.proto.web.WebAuthProto;
 import org.iharu.proto.web.WebResponseProto;
 import org.iharu.type.BaseAuthorizationType;
-import org.iharu.type.ResultType;
-import org.iharu.type.error.ErrorType;
+import org.iharu.type.BaseHttpStatus;
 import org.iharu.web.WebAttributeConstants;
 import org.iharu.web.security.BaseSecurityComponent;
 import org.iharu.web.session.entity.SessionEntity;
@@ -52,7 +50,7 @@ public class OAuthController extends BaseSecurityComponent {
             session.setAttribute(WebAttributeConstants.SESSION_DATA, sessionEntity);
             webAuthProto.setToken(token);
             webAuthProto.setValid_timestamp(timestamp);
-            return HttpUtils.CustomResponseGen(ResultType.SUCCESS, webAuthProto);
+            return HttpUtils.GenResponse(BaseHttpStatus.SUCCESS, webAuthProto);
         } else {
             return HttpUtils.AuthenticationFailed();
         }
@@ -77,7 +75,7 @@ public class OAuthController extends BaseSecurityComponent {
             String token = AuthorizationUtils.tokenGen();
             webAuthProto.setVoucher(token);
             webAuthProto.setValid_timestamp(timestamp);
-            return HttpUtils.CustomResponseGen(ResultType.SUCCESS, webAuthProto);
+            return HttpUtils.GenResponse(BaseHttpStatus.SUCCESS, webAuthProto);
         } else {
             return HttpUtils.AuthorityInsufficient();
         }

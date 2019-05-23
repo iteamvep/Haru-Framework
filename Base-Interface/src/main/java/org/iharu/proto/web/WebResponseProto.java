@@ -5,6 +5,7 @@
  */
 package org.iharu.proto.web;
 
+import org.iharu.type.BaseHttpStatus;
 import org.iharu.type.ResultType;
 
 /**
@@ -13,50 +14,50 @@ import org.iharu.type.ResultType;
  */
 public class WebResponseProto<T> {
     
-    private ResultType response_code;
-    private String response_msg;
-    private T response_data;
+    private BaseHttpStatus status;
+    private String msg;
+    private T data;
 
     /**
-     * @return the response_code
+     * @return the status
      */
-    public ResultType getResponse_code() {
-        return response_code;
+    public BaseHttpStatus getStatus() {
+        return status;
     }
 
     /**
-     * @param response_code the response_code to set
+     * @param status the status to set
      */
-    public void setResponse_code(ResultType response_code) {
-        this.response_code = response_code;
+    public void setStatus(BaseHttpStatus status) {
+        this.status = status;
     }
 
     /**
-     * @return the response_msg
+     * @return the msg
      */
-    public String getResponse_msg() {
-        return response_msg;
+    public String getMsg() {
+        return msg;
     }
 
     /**
-     * @param response_msg the response_msg to set
+     * @param msg the msg to set
      */
-    public void setResponse_msg(String response_msg) {
-        this.response_msg = response_msg;
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 
     /**
-     * @return the response_data
+     * @return the data
      */
-    public T getResponse_data() {
-        return response_data;
+    public T getData() {
+        return data;
     }
 
     /**
-     * @param response_data the response_data to set
+     * @param data the data to set
      */
-    public void setResponse_data(T response_data) {
-        this.response_data = response_data;
+    public void setData(T data) {
+        this.data = data;
     }
-    
+
 }

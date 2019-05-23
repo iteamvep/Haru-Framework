@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flipkart.zjsonpatch.JsonDiff;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import static com.google.gson.stream.JsonToken.END_DOCUMENT;
@@ -80,6 +81,10 @@ public class JsonUtils<T> {
         return json2objectWithoutThrowException(new String(bytes, StandardCharsets.UTF_8), typeReference);
     }
     
+    public static <T> T jsonnode2object(JsonNode start2Node, Class<T> clz) throws JsonProcessingException {
+        return jsonnode2object(start2Node, clz, null);
+    }
+    
     public static <T> T jsonnode2object(JsonNode start2Node, Class<T> clz, ObjectMapper objectMapper) throws JsonProcessingException {
         if(objectMapper == null)
             objectMapper = new ObjectMapper();
@@ -89,6 +94,21 @@ public class JsonUtils<T> {
     
     public static JsonNode json2jsonnode(String json) throws IOException {
         return json2jsonnode(json, null);
+    }
+    
+    public static JsonNode diffObject(Object source, Object target) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode targetNode = objectMapper.valueToTree(target);
+        JsonNode sourceNode = objectMapper.valueToTree(source);
+        return JsonDiff.asJson(sourceNode, targetNode);
+    }
+    
+    public static JsonNode diffObject(Object source, Object target, ObjectMapper objectMapper) {
+        if(objectMapper == null)
+            objectMapper = new ObjectMapper();
+        JsonNode targetNode = objectMapper.valueToTree(target);
+        JsonNode sourceNode = objectMapper.valueToTree(source);
+        return JsonDiff.asJson(sourceNode, targetNode);
     }
     
     public static<T> byte[] object2bytes(T obj) {

@@ -3,18 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.iharu.initializer;
+package org.iharu.spring.config;
 
-import java.io.IOException;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  *
  * @author iHaru
  */
-public interface InitializerInterface {
-    public void initMethod();
-    public void destroyMethod();
-    
-    public void init() throws Exception ;
+//@Configuration
+public class BaseConfig {
     
 }

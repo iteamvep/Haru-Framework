@@ -11,19 +11,26 @@ public class ReconnectContorller {
     Executors.newSingleThreadExecutor().submit(() -> {
           try {
             if (wsClient == null) {
-              LOG.warn("websocket client name:{} not exist.", wsClient.name);
+              LOG.warn("websocket client:{} not exist.", wsClient.name);
               return;
             } 
-            Thread.sleep(calcReconnectDelay(wsClient.getRetrycount()));
+            long st = calcReconnectDelay(wsClient.getRetrycount());
+            LOG.info("websocket client:{} will try reconnect after {}s.", wsClient.name, st/1000);
+            Thread.sleep(st);
+            if(wsClient.webSocketSession.isOpen()){
+                LOG.info("websocket client:{} reconnected.", wsClient.name);
+                return;
+            }
             if (wsClient.connect()) {
-              LOG.info("websocket client name:{} reconnected.", wsClient.name);
+                LOG.info("websocket client:{} reconnected.", wsClient.name);
             } else {
-              LOG.info("websocket client name:{} reconnect failed. retrying...", wsClient.name);
-              reconnect(wsClient);
+                LOG.info("websocket client:{} reconnect failed. retrying...", wsClient.name);
+                wsClient.retrycount.getAndIncrement();
+                reconnect(wsClient);
             } 
           } catch (InterruptedException e) {
             LOG.error("Exception while sending a message", e);
-          } 
+          }
         });
   }
   

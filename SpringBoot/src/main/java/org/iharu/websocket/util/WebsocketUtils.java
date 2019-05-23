@@ -6,6 +6,7 @@
 package org.iharu.websocket.util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import org.apache.commons.lang3.StringUtils;
 import org.iharu.exception.BaseException;
@@ -26,13 +27,13 @@ public class WebsocketUtils {
         return new WebsocketProto(resultType, new WebsocketSystemProto(systemMessageType, data));
     }
     
-    public static <T> WebsocketProto NonSystemMessageEncoder(ResultType resultType, String module, T data) {
+    public static <T> WebsocketProto NonSystemMessageEncoder(ResultType resultType, @NotNull String module, T data) {
         if(StringUtils.isBlank(module))
             throw new BaseException(ErrorType.PARAMETER_ERROR, "module 不能为空");
         return new WebsocketProto(module, resultType, JsonUtils.object2json(data));
     }
     
-    public static WebsocketProto MessageDecoder(String proto) throws IOException{
+    public static WebsocketProto MessageDecoder(String proto) throws IOException {
         return JsonUtils.json2object(proto, new TypeReference<WebsocketProto>(){});
     }
     

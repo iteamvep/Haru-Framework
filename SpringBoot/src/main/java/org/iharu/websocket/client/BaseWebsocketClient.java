@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHttpHeaders;
@@ -20,7 +22,7 @@ public class BaseWebsocketClient
 {
     private static final Logger LOG = LoggerFactory.getLogger(BaseWebsocketClient.class);
     
-    protected final String name;
+    protected final @NotNull String name;
     protected final String description;
     protected final BaseWebsocketClient Instance;
     protected URI url;
@@ -41,6 +43,28 @@ public class BaseWebsocketClient
         this.url = URI.create(url);
         this.callbackImpl = callback;
         this.Instance = this;
+    }
+    
+    public void send(String payload) throws IOException{
+        if(!webSocketSession.isOpen()){
+            Instance.connect();
+            if(!webSocketSession.isOpen()){
+                LOG.warn("webSocketSession: {} closed.", name);
+                return;
+            }
+        }
+        webSocketSession.sendMessage(new TextMessage(payload));
+    }
+    
+    public void send(byte[] payload) throws IOException{
+        if(!webSocketSession.isOpen()){
+            Instance.connect();
+            if(!webSocketSession.isOpen()){
+                LOG.warn("webSocketSession: {} closed.", name);
+                return;
+            }
+        }
+        webSocketSession.sendMessage(new BinaryMessage(payload));
     }
 
     public boolean connect()
