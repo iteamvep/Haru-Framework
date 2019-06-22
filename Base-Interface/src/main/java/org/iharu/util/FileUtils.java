@@ -21,7 +21,7 @@ import static org.iharu.constant.ConstantValue.LINESEPARATOR;
  */
 public class FileUtils {
     
-    public static StringBuilder readFile(File file, Charset cs) throws IOException {
+    public static String readFile(File file, Charset cs) throws IOException {
         if(!file.exists())
             return null;
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), cs));
@@ -30,10 +30,11 @@ public class FileUtils {
         while ((line = br.readLine()) != null) {
             sb.append(line).append(LINESEPARATOR);
         }  
-        return sb;
+        int index = sb.length();
+        return sb.delete(index-LINESEPARATOR.getBytes().length, index).toString();
     }
     
-    public static StringBuilder readFile(String file) throws IOException {
+    public static String readFile(String file) throws IOException {
         return readFile(new File(file), Charset.forName("UTF-8"));
     }
     

@@ -28,9 +28,9 @@ public class BaseException extends RuntimeException {
         this.module = module;
     }
     
-    public BaseException(ErrorType errorType, String module) {
+    public BaseException(ErrorType errorType, String msg) {
+        super(msg);
         this.errorType = errorType;
-        this.module = module;
     }
     
     public BaseException(ErrorType errorType, Throwable sourceException) {

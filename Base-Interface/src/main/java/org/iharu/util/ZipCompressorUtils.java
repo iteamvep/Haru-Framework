@@ -30,10 +30,12 @@ public class ZipCompressorUtils {
    /** 
      * 创建ZIP文件 
      * @param sourcePath 文件或文件夹路径 
+     * @param destFolder 
+     * @param zipName 
      * @param zipPath 生成的zip文件存在路径（包括文件名） 
      */  
     public static void createZip(String sourcePath, String destFolder, String zipName) {  
-        FileOutputStream fos = null;  
+        FileOutputStream fos;  
         ZipOutputStream zos = null;  
         if(!new File(destFolder).exists()){
             new File(destFolder).mkdirs();
@@ -75,8 +77,7 @@ public class ZipCompressorUtils {
                     //空目录则创建当前目录
                     zos.putNextEntry(new ZipEntry(parentPath)); // TODO Auto-generated catch block
                     } catch (IOException ex) {
-                        LOG.error("创建ZIP文件失败");
-                        LOG.error(ExceptionUtils.getStackTrace(ex));
+                        LOG.error("创建ZIP文件失败", ex);
                     }
                 }  
             }else{  
@@ -93,16 +94,16 @@ public class ZipCompressorUtils {
                     }  
   
                 } catch (FileNotFoundException e) {  
-                    //log.error("创建ZIP文件失败",e);  
+                    LOG.error("创建ZIP文件失败",e);  
                 } catch (IOException e) {  
-                    //log.error("创建ZIP文件失败",e);  
+                    LOG.error("创建ZIP文件失败",e);  
                 }finally{  
                     try {  
                         if(fis!=null){  
                             fis.close();  
                         }  
                     }catch(IOException e){  
-                        //log.error("创建ZIP文件失败",e);  
+                        LOG.error("创建ZIP文件失败",e);  
                     }  
                 }  
             }  

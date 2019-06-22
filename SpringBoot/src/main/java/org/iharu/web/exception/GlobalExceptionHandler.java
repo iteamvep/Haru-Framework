@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
    @ResponseBody
    public WebResponseProto CustomExceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception ex) {
         LOG.error("Web - CustomExceptionHandler left message： {}{}", LINESEPARATOR, ExceptionUtils.getStackTrace(ex));
-        return HttpUtils.GenResponse(BaseHttpStatus.ERROR, "服务器内部发生错误");
+        return HttpUtils.GenResponse(BaseHttpStatus.ERROR, "SERVER ERROR");
     }
    
 //   @ExceptionHandler(AccessDeniedException.class) 
@@ -49,7 +49,7 @@ public class GlobalExceptionHandler {
    @ResponseBody
    public Object SystemExceptionHandler(Exception ex){
       LOG.error("Web - SystemExceptionHandler left message： {}{}", LINESEPARATOR, ExceptionUtils.getStackTrace(ex));
-        return HttpUtils.GenResponse(BaseHttpStatus.ERROR, "服务器内部发生错误");
+        return HttpUtils.GenResponse(BaseHttpStatus.ERROR, "SERVER ERROR");
    }
 
 }
