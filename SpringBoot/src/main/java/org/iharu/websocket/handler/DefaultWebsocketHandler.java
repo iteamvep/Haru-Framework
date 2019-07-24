@@ -84,10 +84,12 @@ public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
      * 发送信息给指定用户
      * @param <T>
      * @param userId
-     * @param message
+     * @param payload
      * @return
      */
-    public<T> boolean sendMessageToUser(String userId, T message) {
+    public<T> boolean sendMessageToUser(String userId, T payload) {
+        if(payload == null)
+            return false;
         if (!GetUsers().containsKey(userId)) {
             return false;
         }
@@ -96,8 +98,16 @@ public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
         if (!session.isOpen()) {
             return false;
         }
+        TextMessage message;
+        if(payload instanceof String){
+            message = new TextMessage((String)payload);
+        } else if(payload instanceof Integer || payload instanceof Long){
+            message = new TextMessage(String.valueOf(payload));
+        } else {
+            message = new TextMessage(JsonUtils.object2json(payload));
+        }
         try {
-            session.sendMessage(new TextMessage(JsonUtils.object2json(message)));
+            session.sendMessage(message);
             return true;
         } catch (IOException e) {
             GetImplLogger().error("user: {}, send message failed. {}", userId, ExceptionUtils.getStackTrace(e));
@@ -112,6 +122,8 @@ public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
      * @return
      */
     public boolean sendMessageToUser(String userId, byte[] payload) {
+        if(payload == null)
+            return false;
         if (!GetUsers().containsKey(userId)) {
             return false;
         }
@@ -132,18 +144,20 @@ public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
     /**
      * 广播信息
      * @param <T>
-     * @param websocketProto
+     * @param payload
      * @return
      */
-    public <T> boolean sendMessageToAllUsers(T websocketProto) {
+    public <T> boolean sendMessageToAllUsers(T payload) {
+        if(payload == null)
+            return false;
         AtomicBoolean allSendSuccess = new AtomicBoolean(true);
         TextMessage message;
-        if(websocketProto instanceof String){
-            message = new TextMessage((String)websocketProto);
-        } else if(websocketProto instanceof Integer || websocketProto instanceof Long){
-            message = new TextMessage(String.valueOf(websocketProto));
+        if(payload instanceof String){
+            message = new TextMessage((String)payload);
+        } else if(payload instanceof Integer || payload instanceof Long){
+            message = new TextMessage(String.valueOf(payload));
         } else {
-            message = new TextMessage(JsonUtils.object2json(websocketProto));
+            message = new TextMessage(JsonUtils.object2json(payload));
         }
         GetUsers().forEach((uid, session) -> {
             try {
@@ -164,6 +178,8 @@ public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
      * @return
      */
     public boolean sendMessageToAllUsers(byte[] payload) {
+        if(payload == null)
+            return false;
         AtomicBoolean allSendSuccess = new AtomicBoolean(true);
         BinaryMessage message = new BinaryMessage(payload);
         GetUsers().forEach((uid, session) -> {
