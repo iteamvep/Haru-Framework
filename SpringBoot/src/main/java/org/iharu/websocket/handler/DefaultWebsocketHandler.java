@@ -8,7 +8,6 @@ package org.iharu.websocket.handler;
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.iharu.proto.websocket.WebsocketProto;
@@ -32,7 +31,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
  */
 public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
     
-    private static final String SESSION_DATA = WebAttributeConstants.SESSION_DATA;
+    protected static final String SESSION_DATA = WebAttributeConstants.SESSION_DATA;
 
     abstract protected org.slf4j.Logger GetImplLogger();
     abstract protected Map<String, WebSocketSession> GetUsers();
@@ -248,7 +247,7 @@ public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
             return WebsocketUtils.MessageDecoder(proto);
         } catch (IOException ex) {
             GetImplLogger().error("user: {}, decode proto failed. proto: {}", userId, proto);
-            WebsocketProto websocketProto = WebsocketUtils.SystemMessageEncoder(ResultType.FAIL, 
+            WebsocketProto websocketProto = WebsocketUtils.SystemMessageEncoder(ResultType.FAILURE, 
                 WebsocketSystemMessageType.PAYLOAD_ERROR, 
                 proto);
             sendMessageToUser(userId, websocketProto);

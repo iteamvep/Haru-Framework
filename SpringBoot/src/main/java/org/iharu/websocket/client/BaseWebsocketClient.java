@@ -3,10 +3,11 @@ package org.iharu.websocket.client;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 import javax.validation.constraints.NotNull;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.BinaryMessage;
@@ -22,24 +23,31 @@ public class BaseWebsocketClient
 {
     private static final Logger LOG = LoggerFactory.getLogger(BaseWebsocketClient.class);
     
-    protected final @NotNull String name;
+    private final @NotNull String name;
     protected final String description;
+    protected final HashMap<String, String> headers;
     protected final BaseWebsocketClient Instance;
     protected URI url;
-    protected BaseClientCallBack callbackImpl;
+    protected WebsocketClientCallBack callbackImpl;
     protected WebSocketClient webSocketClient;
     protected WebSocketSession webSocketSession;
     protected AtomicInteger retrycount = new AtomicInteger(0);
 
-    public BaseWebsocketClient(String name, String url, BaseClientCallBack callback)
+    public BaseWebsocketClient(String name, String url, WebsocketClientCallBack callback)
     {
-        this(name, null, url, callback);
+        this(name, null, null, url, callback);
+    }
+    
+    public BaseWebsocketClient(String name, HashMap headers, String url, WebsocketClientCallBack callback)
+    {
+        this(name, null, headers, url, callback);
     }
 
-    public BaseWebsocketClient(String name, String description, String url, BaseClientCallBack callback)
+    public BaseWebsocketClient(String name, String description, HashMap headers, String url, WebsocketClientCallBack callback)
     {
         this.name = name;
         this.description = description;
+        this.headers = headers;
         this.url = URI.create(url);
         this.callbackImpl = callback;
         this.Instance = this;
@@ -49,7 +57,7 @@ public class BaseWebsocketClient
         if(!webSocketSession.isOpen()){
             Instance.connect();
             if(!webSocketSession.isOpen()){
-                LOG.warn("webSocketSession: {} closed.", name);
+                LOG.warn("webSocketSession: {} closed.", getName());
                 return;
             }
         }
@@ -60,7 +68,7 @@ public class BaseWebsocketClient
         if(!webSocketSession.isOpen()){
             Instance.connect();
             if(!webSocketSession.isOpen()){
-                LOG.warn("webSocketSession: {} closed.", name);
+                LOG.warn("webSocketSession: {} closed.", getName());
                 return;
             }
         }
@@ -72,13 +80,24 @@ public class BaseWebsocketClient
         try
         {
             if (webSocketClient == null) {
-              webSocketClient = new StandardWebSocketClient();
+                webSocketClient = new StandardWebSocketClient();
+            }
+            WebSocketHttpHeaders _headers = new WebSocketHttpHeaders();
+            if(headers != null) {
+                headers.forEach((k, v) -> {
+                    _headers.add(k, v);
+                });
             }
             if ((webSocketSession == null) || (!webSocketSession.isOpen())) {
-                webSocketSession = ((WebSocketSession)webSocketClient.doHandshake(new TextWebSocketHandler()
-                {
+                webSocketSession = ((WebSocketSession)webSocketClient.doHandshake(new TextWebSocketHandler() {
                     @Override
                     public void handleTextMessage(WebSocketSession session, TextMessage message)
+                    {
+                        callbackImpl.callback(message);
+                    }
+                    
+                    @Override
+                    public void handleBinaryMessage(WebSocketSession session, BinaryMessage message)
                     {
                         callbackImpl.callback(message);
                     }
@@ -86,7 +105,7 @@ public class BaseWebsocketClient
                     @Override
                     public void afterConnectionEstablished(WebSocketSession session)
                     {
-                        BaseWebsocketClient.LOG.info("websocket: {} established connection", name);
+                        BaseWebsocketClient.LOG.info("websocket: {} established connection", getName());
                         retrycount = new AtomicInteger(0);
                     }
 
@@ -94,7 +113,7 @@ public class BaseWebsocketClient
                     public void afterConnectionClosed(WebSocketSession session, CloseStatus status)
                       throws Exception
                     {
-                        BaseWebsocketClient.LOG.info("websocket: {} connection closed. code: {}, reason:{}", name, status.getCode(), status.getReason());
+                        BaseWebsocketClient.LOG.info("websocket: {} connection closed. code: {}, reason:{}", getName(), status.getCode(), status.getReason());
                         ReconnectContorller.reconnect(Instance);
                     }
 
@@ -107,22 +126,20 @@ public class BaseWebsocketClient
                         }
                         if(ex instanceof EOFException)
                             return;
-                        LOG.error("websocket: {} TransportError:{}", name, ExceptionUtils.getStackTrace(ex));
+                        LOG.error("websocket: {} Exception while transport data", getName(), ex);
                     }
-                }, new WebSocketHttpHeaders(), url).get());
+                }, _headers, url).get());
             }
             return webSocketSession.isOpen();
         }
         catch (InterruptedException|ExecutionException e)
         {
-          LOG.error("websocket: {} Exception while accessing websockets", name, e);
+          LOG.error("websocket: {} Exception while accessing websockets", getName(), e);
         }
         return false;
     }
 
-    public void close()
-      throws IOException
-    {
+    public void close() throws IOException {
         if ((webSocketSession != null) && (webSocketSession.isOpen())) {
             webSocketSession.close();
         }
@@ -133,5 +150,12 @@ public class BaseWebsocketClient
      */
     public int getRetrycount() {
         return retrycount.get();
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
     }
 }

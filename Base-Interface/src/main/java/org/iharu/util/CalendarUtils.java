@@ -13,7 +13,7 @@ import java.util.TimeZone;
  *
  * @author iHaru
  */
-public class JSTUtils {
+public class CalendarUtils {
     
     public static Calendar getTimezoneCalendar(String timezone) {
         // 1、取得本地时间：

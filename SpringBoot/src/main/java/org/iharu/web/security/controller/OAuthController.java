@@ -12,7 +12,7 @@ import org.iharu.proto.web.WebResponseProto;
 import org.iharu.type.BaseAuthorizationType;
 import org.iharu.type.BaseHttpStatus;
 import org.iharu.web.WebAttributeConstants;
-import org.iharu.web.security.BaseSecurityComponent;
+import org.iharu.web.security.BaseSecurityController;
 import org.iharu.web.session.entity.SessionEntity;
 import org.iharu.web.util.HttpUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(value = {"/oauth","/OAuth"}, produces = "application/json;charset=UTF-8")
-public class OAuthController extends BaseSecurityComponent {
+public class OAuthController extends BaseSecurityController {
     
     /**
      * 

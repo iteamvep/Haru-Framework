@@ -11,8 +11,9 @@ package org.iharu.type;
  */
 public enum ResultType {
     SUCCESS(1),
-    FAIL(0),
-    ERROR(-1)
+    FAILURE(0),
+    ERROR(2),
+    UNKNOWN(-1)
     ;
     
     private int code;

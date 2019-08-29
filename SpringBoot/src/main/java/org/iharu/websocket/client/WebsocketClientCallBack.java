@@ -2,11 +2,11 @@ package org.iharu.websocket.client;
 
 import java.io.IOException;
 import javax.annotation.PreDestroy;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
+import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.TextMessage;
 
-public abstract class BaseClientCallBack
+public abstract class WebsocketClientCallBack
 {
   
     protected abstract BaseWebsocketClient getWebsocketClient();
@@ -24,10 +24,12 @@ public abstract class BaseClientCallBack
         }
         catch (IOException ex)
         {
-          getImplLogger().error(ExceptionUtils.getStackTrace(ex));
+          getImplLogger().error("websocket client {} close error", getWebsocketClient().getName(), ex);
         }
     }
   
     protected abstract void callback(TextMessage paramTextMessage);
+    
+    protected abstract void callback(BinaryMessage paramTextMessage);
   
 }

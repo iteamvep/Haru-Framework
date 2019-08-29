@@ -24,8 +24,8 @@ import org.springframework.web.util.WebUtils;
  *
  * @author iHaru
  */
-public class BaseSecurityComponent extends BaseController {
-    private static final Logger LOG = LoggerFactory.getLogger(BaseSecurityComponent.class);
+public class BaseSecurityController extends BaseController {
+    private static final Logger LOG = LoggerFactory.getLogger(BaseSecurityController.class);
     
     @ModelAttribute  
     @Override

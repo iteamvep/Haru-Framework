@@ -33,11 +33,10 @@ public abstract class DefaultWebsocketInterceptor implements HandshakeIntercepto
                     HttpSession session = servletRequest.getServletRequest().getSession();
                     
                     SessionEntity sessionEntity = valid(servletRequest, session);
-                    if(sessionEntity == null)
-                        return false;
-                    
-                    attributes.put(SESSION_DATA, sessionEntity);
-                    return true;
+                    if(sessionEntity != null) {
+                        attributes.put(SESSION_DATA, sessionEntity);
+                        return true;
+                    }
                 }
 		return false;
 	}
