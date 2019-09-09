@@ -53,13 +53,13 @@ public class ScriptUtils {
 		
 		//4.调用脚本方法，返回结果
 		Object result = invokeTargetMethod(engine, functionName, args);
-		System.out.println(result);
+//		System.out.println(result);
                 return result;
 	}
         
         public Object getScriptProperty(String property) throws ScriptException, NoSuchMethodException {
                 Object result = engine.get(property);
-		System.out.println(result);
+//		System.out.println(result);
                 return result;
 	}
  

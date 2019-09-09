@@ -9,10 +9,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.iharu.constant.ConstantValue;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -21,6 +24,10 @@ import org.slf4j.LoggerFactory;
  */
 public class CommontUtils {
     static final org.slf4j.Logger LOG = LoggerFactory.getLogger(CommontUtils.class);
+    
+    public static String GenUUID(){
+        return UUID.randomUUID().toString();
+    }
     
     public static String getFileHex(String file){
         try {
@@ -57,4 +64,12 @@ public class CommontUtils {
         return cal.getTime();
     }
     
+    public static byte[] StringToByteArray(String str){
+        try {
+            return str.getBytes(ConstantValue.CHARSET);
+        } catch (UnsupportedEncodingException ex) {
+            LOG.error("could not encode: {}", str);
+        }
+        return null;
+    }
 }

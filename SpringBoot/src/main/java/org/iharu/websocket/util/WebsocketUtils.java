@@ -30,7 +30,7 @@ public class WebsocketUtils {
     public static <T> WebsocketProto NonSystemMessageEncoder(ResultType resultType, @NotNull String module, T data) {
         if(StringUtils.isBlank(module))
             throw new BaseException(ErrorType.PARAMETER_ERROR, "module 不能为空");
-        return new WebsocketProto(module, resultType, JsonUtils.object2json(data));
+        return new WebsocketProto(resultType, module, JsonUtils.object2json(data));
     }
     
     public static WebsocketProto MessageDecoder(String proto) throws IOException {

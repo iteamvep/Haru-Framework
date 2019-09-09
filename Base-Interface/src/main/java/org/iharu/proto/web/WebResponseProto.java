@@ -6,7 +6,6 @@
 package org.iharu.proto.web;
 
 import org.iharu.type.BaseHttpStatus;
-import org.iharu.type.ResultType;
 
 /**
  *

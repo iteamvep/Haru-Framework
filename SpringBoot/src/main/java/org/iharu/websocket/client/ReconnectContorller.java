@@ -11,8 +11,8 @@ public class ReconnectContorller {
     Executors.newSingleThreadExecutor().submit(() -> {
           try {
             if (wsClient == null) {
-              LOG.warn("websocket client not exist.");
-              return;
+                LOG.warn("websocket client not exist.");
+                return;
             } 
             long st = calcReconnectDelay(wsClient.getRetrycount());
             LOG.info("websocket client:{} will try reconnect after {}s.", wsClient.getName(), st/1000);

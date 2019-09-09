@@ -19,7 +19,8 @@ public final class ConstantValue {
     public final static String LINESEPARATOR = System.getProperty("line.separator", "\n");
     public final static String FILESEPARATOR = File.separator;
     public final static String CLASSPATH;
-    public final static String TEMP_FOLDER = System.getProperty("java.io.tmpdir") + FILESEPARATOR + UUID.randomUUID().toString();
+    public final static String DEFAULT_TEMP_FOLDER = System.getProperty("java.io.tmpdir") + FILESEPARATOR + UUID.randomUUID().toString();
+    public final static String CHARSET = "UTF-8";
     
     static{
         String _CLASSPATH = Thread.currentThread().getContextClassLoader().getResource("").getPath();

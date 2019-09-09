@@ -14,6 +14,10 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Request.Builder;
+import okhttp3.Response;
 import static org.iharu.constant.ConstantValue.FILESEPARATOR;
 
 /**
@@ -35,7 +39,7 @@ public class HttpClientUtils {
             conn.setReadTimeout(30 * 1000);
             conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36"); 
             conn.setRequestProperty("DNT", "1");
-            conn.setRequestProperty("Cache-Control", "no-cache, no-store, must-revalidate");
+            conn.setRequestProperty("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
             conn.setRequestProperty("Prama", "no-cache");
             byte[] buffer = new byte[1024];  
             int len = 0;  
@@ -65,4 +69,33 @@ public class HttpClientUtils {
     public static boolean DownloadFile(String url, String folder, String filename) throws IOException{
         return DownloadFile(url, folder, filename, null, -1);
     }
+    
+    public static String GetBody(String url, String host, int port) throws IOException{
+        OkHttpClient client;
+        if(host != null && !host.trim().isEmpty() && port > 0){
+            Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port));
+            client = new OkHttpClient.Builder().proxy(proxy).build();
+        } else {
+            client = new OkHttpClient();
+        }
+        
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36")
+                .addHeader("DNT", "1")
+                .addHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0")
+                .addHeader("Prama", "no-cache")
+                .addHeader(url, url)
+                .build();
+        Response response = client.newCall(request).execute();
+        if (!response.isSuccessful()) {
+            throw new IOException("Failed to download file: " + response);
+        }
+        return response.body().string();
+    }
+    
+    public static String GetBody(String url) throws IOException{
+        return GetBody(url, null, -1);
+    }
+        
 }

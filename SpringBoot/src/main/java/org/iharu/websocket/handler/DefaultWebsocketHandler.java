@@ -200,6 +200,8 @@ public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
      * @return
      */
     protected String getUserId(WebSocketSession session) {
+        if (session == null)
+            return null;
         try {
             SessionEntity sessionEntity = (SessionEntity) session.getAttributes().get(SESSION_DATA);
             if(sessionEntity != null)

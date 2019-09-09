@@ -6,7 +6,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
+import javax.annotation.PreDestroy;
 import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,12 +26,13 @@ public class BaseWebsocketClient
     private final @NotNull String name;
     protected final String description;
     protected final HashMap<String, String> headers;
-    protected final BaseWebsocketClient Instance;
+    protected final BaseWebsocketClient instance;
     protected URI url;
     protected WebsocketClientCallBack callbackImpl;
     protected WebSocketClient webSocketClient;
     protected WebSocketSession webSocketSession;
     protected AtomicInteger retrycount = new AtomicInteger(0);
+    private boolean isReconnecting = false;
 
     public BaseWebsocketClient(String name, String url, WebsocketClientCallBack callback)
     {
@@ -50,12 +51,12 @@ public class BaseWebsocketClient
         this.headers = headers;
         this.url = URI.create(url);
         this.callbackImpl = callback;
-        this.Instance = this;
+        this.instance = this;
     }
     
     public void send(String payload) throws IOException{
         if(!webSocketSession.isOpen()){
-            Instance.connect();
+            instance.connect();
             if(!webSocketSession.isOpen()){
                 LOG.warn("webSocketSession: {} closed.", getName());
                 return;
@@ -66,7 +67,7 @@ public class BaseWebsocketClient
     
     public void send(byte[] payload) throws IOException{
         if(!webSocketSession.isOpen()){
-            Instance.connect();
+            instance.connect();
             if(!webSocketSession.isOpen()){
                 LOG.warn("webSocketSession: {} closed.", getName());
                 return;
@@ -107,14 +108,18 @@ public class BaseWebsocketClient
                     {
                         BaseWebsocketClient.LOG.info("websocket: {} established connection", getName());
                         retrycount = new AtomicInteger(0);
+                        isReconnecting = false;
                     }
 
                     @Override
                     public void afterConnectionClosed(WebSocketSession session, CloseStatus status)
                       throws Exception
                     {
+                        if(isReconnecting == true)
+                            return;
+                        isReconnecting = true;
                         BaseWebsocketClient.LOG.info("websocket: {} connection closed. code: {}, reason:{}", getName(), status.getCode(), status.getReason());
-                        ReconnectContorller.reconnect(Instance);
+                        ReconnectContorller.reconnect(instance);
                     }
 
                     @Override
@@ -142,6 +147,17 @@ public class BaseWebsocketClient
     public void close() throws IOException {
         if ((webSocketSession != null) && (webSocketSession.isOpen())) {
             webSocketSession.close();
+        }
+    }
+    
+    @PreDestroy
+    public void destroyMethod()
+    {
+        try {
+            close();
+        }
+        catch (IOException ex) {
+            LOG.error("websocket client {} close error", name, ex);
         }
     }
 

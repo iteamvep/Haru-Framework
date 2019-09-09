@@ -20,6 +20,8 @@ public class WebsocketProto<T> {
     protected ResultType proto_code;
     protected String proto_payload;
     protected String proto_module;
+    private String proto_sender;
+    private String proto_recipient;
     protected WebsocketMessageType proto_type;
     protected long timestamp;
     protected String sign;
@@ -30,6 +32,14 @@ public class WebsocketProto<T> {
         this.proto_type = WebsocketMessageType.SYSTEM;
         this.proto_code = proto_code;
         this.proto_payload = proto_payload;
+    }
+    
+    public WebsocketProto (ResultType proto_code, String proto_payload, long timestamp, String sign) {
+        this.proto_type = WebsocketMessageType.SYSTEM;
+        this.proto_code = proto_code;
+        this.proto_payload = proto_payload;
+        this.timestamp = timestamp;
+        this.sign = sign;
     }
     
     public WebsocketProto (ResultType proto_code, WebsocketSystemProto proto_payload) {
@@ -44,11 +54,31 @@ public class WebsocketProto<T> {
         this.proto_payload = proto_payload;
     }
     
-    public WebsocketProto (String proto_module, ResultType proto_code, String proto_payload) {
+    public WebsocketProto (ResultType proto_code, String proto_module, String proto_payload) {
         this.proto_type = WebsocketMessageType.NON_SYSTEM;
         this.proto_code = proto_code;
         this.proto_module = proto_module;
         this.proto_payload = proto_payload;
+    }
+    
+    public WebsocketProto (ResultType proto_code, String proto_module, String proto_sender, String proto_recipient, String proto_payload) {
+        this.proto_type = WebsocketMessageType.NON_SYSTEM;
+        this.proto_code = proto_code;
+        this.proto_module = proto_module;
+        this.proto_sender = proto_sender;
+        this.proto_recipient = proto_recipient;
+        this.proto_payload = proto_payload;
+    }
+    
+    public WebsocketProto (ResultType proto_code, String proto_module, String proto_sender, String proto_recipient, String proto_payload, long timestamp, String sign) {
+        this.proto_type = WebsocketMessageType.NON_SYSTEM;
+        this.proto_code = proto_code;
+        this.proto_module = proto_module;
+        this.proto_sender = proto_sender;
+        this.proto_recipient = proto_recipient;
+        this.proto_payload = proto_payload;
+        this.timestamp = timestamp;
+        this.sign = sign;
     }
     
     public WebsocketProto (String proto_module, String proto_payload) {
@@ -140,6 +170,34 @@ public class WebsocketProto<T> {
      */
     public void setProto_module(String proto_module) {
         this.proto_module = proto_module;
+    }
+
+    /**
+     * @return the proto_sender
+     */
+    public String getProto_sender() {
+        return proto_sender;
+    }
+
+    /**
+     * @param proto_sender the proto_sender to set
+     */
+    public void setProto_sender(String proto_sender) {
+        this.proto_sender = proto_sender;
+    }
+
+    /**
+     * @return the proto_recipient
+     */
+    public String getProto_recipient() {
+        return proto_recipient;
+    }
+
+    /**
+     * @param proto_recipient the proto_recipient to set
+     */
+    public void setProto_recipient(String proto_recipient) {
+        this.proto_recipient = proto_recipient;
     }
     
 }
