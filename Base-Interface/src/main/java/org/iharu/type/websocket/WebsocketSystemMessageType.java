@@ -20,6 +20,8 @@ public enum WebsocketSystemMessageType {
     AUTHORIZATION_REQUIRED(),
     AUTHORIZATION_FAIL(),
     AUTHORIZATION_SUCCESS(),
+    ACCESS_DENIED(),
+    PERMISSION_DENIED(),
     PING()
     
 }

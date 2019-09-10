@@ -5,6 +5,12 @@
  */
 package org.iharu.util;
 
+import java.io.UnsupportedEncodingException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.iharu.constant.ConstantValue;
+import static org.iharu.util.CommontUtils.LOG;
+
 /**
  *
  * @author iHaru
@@ -25,4 +31,23 @@ public class StringUtils {
         }
         return false;
     }
+    
+    public static byte[] StringToByteArray(String str){
+        try {
+            return str.getBytes(ConstantValue.CHARSET);
+        } catch (UnsupportedEncodingException ex) {
+            LOG.error("could not encode: {}", str);
+        }
+        return null;
+    }
+    
+    public static String ByteArrayToString(byte[] bytes){
+        try {
+            return new String(bytes, ConstantValue.CHARSET);
+        } catch (UnsupportedEncodingException ex) {
+            LOG.error("could not encode: {}", bytes);
+        }
+        return null;
+    }
+    
 }

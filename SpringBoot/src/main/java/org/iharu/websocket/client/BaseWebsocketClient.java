@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.PreDestroy;
 import javax.validation.constraints.NotNull;
+import org.iharu.util.CommontUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.BinaryMessage;
@@ -23,34 +24,53 @@ public class BaseWebsocketClient
 {
     private static final Logger LOG = LoggerFactory.getLogger(BaseWebsocketClient.class);
     
-    private final @NotNull String name;
+    private boolean isReconnecting = false;
+    private boolean shutdown = false;
+    private String clientID = null;
+    AtomicInteger retrycount = new AtomicInteger(0);
+    protected final @NotNull String name;
     protected final String description;
     protected final HashMap<String, String> headers;
     protected final BaseWebsocketClient instance;
-    protected URI url;
-    protected WebsocketClientCallBack callbackImpl;
+    protected final URI url;
+    protected final WebsocketClientCallBack clientCallbackImpl;
+    protected final ReconnectCallback reconnectCallbackImpl;
     protected WebSocketClient webSocketClient;
     protected WebSocketSession webSocketSession;
-    protected AtomicInteger retrycount = new AtomicInteger(0);
-    private boolean isReconnecting = false;
 
     public BaseWebsocketClient(String name, String url, WebsocketClientCallBack callback)
     {
-        this(name, null, null, url, callback);
+        this(name, null, null, url, callback, null);
     }
     
     public BaseWebsocketClient(String name, HashMap headers, String url, WebsocketClientCallBack callback)
     {
-        this(name, null, headers, url, callback);
+        this(name, null, headers, url, callback, null);
+    }
+    
+    public BaseWebsocketClient(String name, String url, WebsocketClientCallBack callback, ReconnectCallback reconnectCallbackImpl)
+    {
+        this(name, null, null, url, callback, reconnectCallbackImpl);
+    }
+    
+    public BaseWebsocketClient(String name, HashMap headers, String url, WebsocketClientCallBack callback, ReconnectCallback reconnectCallbackImpl)
+    {
+        this(name, null, headers, url, callback, reconnectCallbackImpl);
     }
 
-    public BaseWebsocketClient(String name, String description, HashMap headers, String url, WebsocketClientCallBack callback)
+    public BaseWebsocketClient(String name, String description, HashMap headers, String url, WebsocketClientCallBack callback, ReconnectCallback reconnectCallbackImpl)
     {
         this.name = name;
         this.description = description;
         this.headers = headers;
         this.url = URI.create(url);
-        this.callbackImpl = callback;
+        this.clientCallbackImpl = callback;
+        this.reconnectCallbackImpl = reconnectCallbackImpl == null ? new ReconnectCallback(){
+            @Override
+            public Logger getImplLogger() {
+                return LOG;
+            }
+        }:reconnectCallbackImpl;
         this.instance = this;
     }
     
@@ -94,13 +114,13 @@ public class BaseWebsocketClient
                     @Override
                     public void handleTextMessage(WebSocketSession session, TextMessage message)
                     {
-                        callbackImpl.callback(message);
+                        clientCallbackImpl.callback(message);
                     }
                     
                     @Override
                     public void handleBinaryMessage(WebSocketSession session, BinaryMessage message)
                     {
-                        callbackImpl.callback(message);
+                        clientCallbackImpl.callback(message);
                     }
 
                     @Override
@@ -115,6 +135,8 @@ public class BaseWebsocketClient
                     public void afterConnectionClosed(WebSocketSession session, CloseStatus status)
                       throws Exception
                     {
+                        if(shutdown)
+                            return;
                         if(isReconnecting == true)
                             return;
                         isReconnecting = true;
@@ -135,30 +157,40 @@ public class BaseWebsocketClient
                     }
                 }, _headers, url).get());
             }
-            return webSocketSession.isOpen();
+            if(webSocketSession.isOpen()){
+                shutdown = false;
+                clientID = CommontUtils.GenUUID();
+                reconnectCallbackImpl.setClientID(clientID);
+                return true;
+            }
         }
-        catch (InterruptedException|ExecutionException e)
+        catch (ExecutionException ex)
         {
-          LOG.error("websocket: {} Exception while accessing websockets", getName(), e);
+            reconnectCallbackImpl.handleException(this, ex);
+        } catch (InterruptedException ex) {
+            
         }
+        LOG.debug("websocket: {} connect failed", getName());
         return false;
     }
 
-    public void close() throws IOException {
+    public void close() {
+        if(shutdown)
+            return;
+        shutdown = true;
         if ((webSocketSession != null) && (webSocketSession.isOpen())) {
-            webSocketSession.close();
+            try {
+                webSocketSession.close();
+            } catch (IOException ex) {
+                
+            }
         }
     }
     
     @PreDestroy
     public void destroyMethod()
     {
-        try {
-            close();
-        }
-        catch (IOException ex) {
-            LOG.error("websocket client {} close error", name, ex);
-        }
+        close();
     }
 
     /**
@@ -173,5 +205,19 @@ public class BaseWebsocketClient
      */
     public String getName() {
         return name;
+    }
+    
+    /**
+     * @return the shutdown
+     */
+    public boolean isShutdown() {
+        return shutdown;
+    }
+
+    /**
+     * @return the clientID
+     */
+    public String getClientID() {
+        return clientID;
     }
 }

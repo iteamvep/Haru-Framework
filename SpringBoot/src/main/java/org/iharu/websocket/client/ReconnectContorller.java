@@ -5,34 +5,40 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ReconnectContorller {
-  private static final Logger LOG = LoggerFactory.getLogger(ReconnectContorller.class);
-  
-  public static void reconnect(BaseWebsocketClient wsClient) {
-    Executors.newSingleThreadExecutor().submit(() -> {
-          try {
-            if (wsClient == null) {
-                LOG.warn("websocket client not exist.");
-                return;
-            } 
-            long st = calcReconnectDelay(wsClient.getRetrycount());
-            LOG.info("websocket client:{} will try reconnect after {}s.", wsClient.getName(), st/1000);
-            Thread.sleep(st);
-            if(wsClient.webSocketSession.isOpen()){
-                LOG.info("websocket client:{} reconnected.", wsClient.getName());
-                return;
+    private static final Logger LOG = LoggerFactory.getLogger(ReconnectContorller.class);
+
+    public static void reconnect(BaseWebsocketClient wsClient) {
+        Executors.newSingleThreadExecutor().submit(() -> {
+            for(;;){
+                try {
+                    if (wsClient == null) {
+                        LOG.warn("websocket client not exist.");
+                        break;
+                    } 
+                    if(wsClient.isShutdown() || wsClient.reconnectCallbackImpl.isStopReconnect(wsClient)) {
+                        LOG.info("websocket client:{} - {} has beed shut down, reconnect cancelled", wsClient.getName(), wsClient.getClientID());
+                        wsClient.close();
+                        break;
+                    }
+                    if(wsClient.webSocketSession.isOpen()){
+                        LOG.info("websocket client:{} - {} reconnected.", wsClient.getName(), wsClient.getClientID());
+                        break;
+                    }
+                    
+                    long st = calcReconnectDelay(wsClient.retrycount.get());
+                    LOG.info("websocket client:{} - {} will try reconnect after {}s.", wsClient.getName(), wsClient.getClientID(), st/1000);
+                    Thread.sleep(st);
+                    if (wsClient.connect()) {
+                        LOG.info("websocket client:{} - {} reconnected.", wsClient.getName(), wsClient.getClientID());
+                        break;
+                    } else {
+                        LOG.info("websocket client:{} - {} reconnect failed. retrying...", wsClient.getName(), wsClient.getClientID());
+                        wsClient.retrycount.getAndIncrement();
+                    }
+                } catch (InterruptedException ex) {}
             }
-            if (wsClient.connect()) {
-                LOG.info("websocket client:{} reconnected.", wsClient.getName());
-            } else {
-                LOG.info("websocket client:{} reconnect failed. retrying...", wsClient.getName());
-                wsClient.retrycount.getAndIncrement();
-                reconnect(wsClient);
-            } 
-          } catch (InterruptedException e) {
-            LOG.error("Exception while sending a message", e);
-          }
         });
-  }
+    }
   
     public static long calcReconnectDelay(int retry) {
         if (retry == 0)

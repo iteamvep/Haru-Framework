@@ -64,12 +64,4 @@ public class CommontUtils {
         return cal.getTime();
     }
     
-    public static byte[] StringToByteArray(String str){
-        try {
-            return str.getBytes(ConstantValue.CHARSET);
-        } catch (UnsupportedEncodingException ex) {
-            LOG.error("could not encode: {}", str);
-        }
-        return null;
-    }
 }

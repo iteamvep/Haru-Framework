@@ -51,7 +51,11 @@ public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
         if(exception instanceof EOFException)
             return;
-        GetImplLogger().error("handleTransportError: {}", ExceptionUtils.getStackTrace(exception));
+        if(exception instanceof IOException){
+            GetImplLogger().warn("handleTransportError: {}", exception.getMessage());
+            return;
+        } 
+        GetImplLogger().error("handleTransportError", exception);
     }
 
     /**
