@@ -3,18 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.iharu.type;
+package org.iharu.main;
 
 /**
  *
  * @author iHaru
  */
-public enum LogType {
-    UNKNOWN(),
-    TRACE(),
-    DEBUG(),
-    INFO(),
-    WARN(),
-    ERROR()
+public class JavaSwapping {
+    
+    public static void main(String[] args) {
+        
+    }
     
 }

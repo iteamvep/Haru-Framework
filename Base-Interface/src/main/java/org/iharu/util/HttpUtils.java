@@ -28,7 +28,7 @@ import static org.iharu.constant.ConstantValue.FILESEPARATOR;
  *
  * @author iHaru
  */
-public class HttpClientUtils {
+public class HttpUtils {
     
     public static boolean DownloadFile(String url, String folder, String filename, String host, int port) throws IOException{
         HttpURLConnection conn = null;
