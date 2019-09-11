@@ -16,6 +16,10 @@ import org.iharu.type.ResultType;
 import org.iharu.web.util.HttpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.web.firewall.RequestRejectedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 //import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -48,7 +52,13 @@ public class GlobalExceptionHandler {
    @ExceptionHandler(Exception.class)
    @ResponseBody
    public Object SystemExceptionHandler(Exception ex){
-      LOG.error("Web - SystemExceptionHandler left message： {}{}", LINESEPARATOR, ExceptionUtils.getStackTrace(ex));
+        if(ex instanceof HttpMessageNotReadableException)
+            return HttpUtils.GenResponse(BaseHttpStatus.ERROR, "http body must not be empty");
+        if(ex instanceof HttpRequestMethodNotSupportedException)
+            return HttpUtils.GenResponse(BaseHttpStatus.ERROR, HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase());
+        if(ex instanceof RequestRejectedException)
+            return HttpUtils.GenResponse(BaseHttpStatus.ERROR, HttpStatus.METHOD_NOT_ALLOWED.BAD_REQUEST.getReasonPhrase());
+        LOG.error("Web - SystemExceptionHandler left message： {}{}", LINESEPARATOR, ExceptionUtils.getStackTrace(ex));
         return HttpUtils.GenResponse(BaseHttpStatus.ERROR, "SERVER ERROR");
    }
 

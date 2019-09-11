@@ -65,7 +65,7 @@ public class JsonUtils<T> {
     }
     
     public static <T> T json2object(byte[] bytes, TypeReference typeReference) throws IOException {
-        return json2object(new String(bytes, StandardCharsets.UTF_8), typeReference);
+        return json2object(StringUtils.ByteArrayToString(bytes), typeReference);
     }
     
     public static <T> T json2objectWithoutThrowException(String json, TypeReference typeReference) {
@@ -78,7 +78,7 @@ public class JsonUtils<T> {
     }
     
     public static <T> T json2objectWithoutThrowException(byte[] bytes, TypeReference typeReference) {
-        return json2objectWithoutThrowException(new String(bytes, StandardCharsets.UTF_8), typeReference);
+        return json2objectWithoutThrowException(StringUtils.ByteArrayToString(bytes), typeReference);
     }
     
     public static <T> T jsonnode2object(JsonNode start2Node, Class<T> clz) throws JsonProcessingException {
@@ -112,11 +112,7 @@ public class JsonUtils<T> {
     }
     
     public static<T> byte[] object2bytes(T obj) {
-        return object2json(obj).getBytes(StandardCharsets.UTF_8);
-    }
-    
-    public static byte[] json2bytes(String json) {
-        return json.getBytes(StandardCharsets.UTF_8);
+        return StringUtils.StringToByteArray(object2json(obj));
     }
     
     public static JsonNode json2jsonnode(String json, ObjectMapper objectMapper) throws IOException {

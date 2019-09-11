@@ -87,7 +87,7 @@ public class HttpUtils {
                 .url(url)
                 .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36")
                 .addHeader("DNT", "1")
-                .addHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0")
+                .addHeader("Cache-Control", "no-cache, no-store, max-age=0, s-maxage=0, must-revalidate, proxy-revalidate")
                 .addHeader("Prama", "no-cache")
                 .addHeader(url, url)
                 .build();
@@ -125,7 +125,7 @@ public class HttpUtils {
                 .url(url)
                 .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36")
                 .addHeader("DNT", "1")
-                .addHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0")
+                .addHeader("Cache-Control", "no-cache, no-store, max-age=0, s-maxage=0, must-revalidate, proxy-revalidate")
                 .addHeader("Prama", "no-cache")
                 .post(requestBody)
                 .build();
