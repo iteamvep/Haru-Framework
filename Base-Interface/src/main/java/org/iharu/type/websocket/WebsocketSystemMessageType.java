@@ -22,6 +22,7 @@ public enum WebsocketSystemMessageType {
     AUTHORIZATION_SUCCESS(),
     ACCESS_DENIED(),
     PERMISSION_DENIED(),
+    MODULE_STATUS_NOTIFY(),
     PING()
     
 }

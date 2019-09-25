@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
         if(ex instanceof HttpRequestMethodNotSupportedException)
             return HttpUtils.GenResponse(BaseHttpStatus.ERROR, HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase());
         if(ex instanceof RequestRejectedException)
-            return HttpUtils.GenResponse(BaseHttpStatus.ERROR, HttpStatus.METHOD_NOT_ALLOWED.BAD_REQUEST.getReasonPhrase());
+            return HttpUtils.GenResponse(BaseHttpStatus.ERROR, HttpStatus.BAD_REQUEST.getReasonPhrase());
         LOG.error("Web - SystemExceptionHandler left message： {}{}", LINESEPARATOR, ExceptionUtils.getStackTrace(ex));
         return HttpUtils.GenResponse(BaseHttpStatus.ERROR, "SERVER ERROR");
    }

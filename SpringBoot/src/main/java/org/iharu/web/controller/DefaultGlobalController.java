@@ -12,6 +12,7 @@ import org.iharu.web.BaseController;
 import org.iharu.web.util.HttpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,7 +26,7 @@ public class DefaultGlobalController extends BaseController {
     
     @RequestMapping("*")
     public WebResponseProto defaultResponse(){
-        return HttpUtils.GenResponse(BaseHttpStatus.FAILURE, "请求URL有误");
+        return HttpUtils.GenResponse(BaseHttpStatus.SUCCESS, HttpStatus.OK.getReasonPhrase());
     }
 
 }

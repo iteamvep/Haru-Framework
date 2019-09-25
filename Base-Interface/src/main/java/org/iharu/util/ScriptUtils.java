@@ -19,7 +19,10 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.script.Bindings;
 import javax.script.Invocable;
 import javax.script.ScriptContext;
@@ -44,21 +47,31 @@ public class ScriptUtils {
             //1.创建脚本引擎
             engine = createScriptEngine();
             //2.绑定全局变量
-            bindingContextVariable(engine, factors);
+            bindingContextVariable(getEngine(), factors);
             //3.读取脚本内容
-            return readScriptIntoEngine(engine, scriptObject);
+            return readScriptIntoEngine(getEngine(), scriptObject);
+        }
+        
+        public boolean initScriptEngine(Object scriptObject, Map<String, Object> factors, List<String> addition) throws ScriptException, FileNotFoundException{
+            //1.创建脚本引擎
+            engine = createScriptEngine();
+            //2.绑定全局变量
+            bindingContextVariable(getEngine(), factors);
+            patchInitData(getEngine(), addition);
+            //3.读取脚本内容
+            return readScriptIntoEngine(getEngine(), scriptObject);
         }
  
 	public Object runScriptFunction(String functionName, Object... args) throws ScriptException, NoSuchMethodException{
 		
 		//4.调用脚本方法，返回结果
-		Object result = invokeTargetMethod(engine, functionName, args);
+		Object result = invokeTargetMethod(getEngine(), functionName, args);
 //		System.out.println(result);
                 return result;
 	}
         
         public Object getScriptProperty(String property) throws ScriptException, NoSuchMethodException {
-                Object result = engine.get(property);
+                Object result = getEngine().get(property);
 //		System.out.println(result);
                 return result;
 	}
@@ -93,7 +106,7 @@ public class ScriptUtils {
                         conn.setConnectTimeout(3*1000); 
                         conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36"); 
                         conn.setRequestProperty("DNT", "1");
-                        conn.setRequestProperty("Cache-Control", "no-cache, no-store, must-revalidate");
+                        conn.setRequestProperty("Cache-Control", "no-cache, no-store, max-age=0, s-maxage=0, must-revalidate, proxy-revalidate");
                         conn.setRequestProperty("Prama", "no-cache");
                         byte[] buffer = new byte[1024];  
                         int len = 0;  
@@ -132,9 +145,24 @@ public class ScriptUtils {
             });
             engine.setBindings(binding, ScriptContext.ENGINE_SCOPE);
 	}
+        
+        private void patchInitData(ScriptEngine engine, List<String> addition) throws ScriptException {
+            if(addition == null)
+                return;
+            for(String item:addition){
+                engine.eval(item);
+            }
+	}
  
 	private static ScriptEngine createScriptEngine() {
 		ScriptEngine engine = new ScriptEngineManager().getEngineByName(ENGINE_NAME);
 		return engine;
 	}
+
+    /**
+     * @return the engine
+     */
+    public ScriptEngine getEngine() {
+        return engine;
+    }
 }

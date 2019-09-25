@@ -14,6 +14,7 @@ import org.iharu.web.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestAttributes;
@@ -33,7 +34,7 @@ public class NotFoundErrorController extends BaseController implements ErrorCont
 
     @RequestMapping(value=ERROR_PATH)
     public WebResponseProto error(HttpServletRequest request, HttpServletResponse response){
-         return GenBaseResponse(BaseHttpStatus.FAILURE, "请求URL有误");
+         return GenBaseResponse(BaseHttpStatus.FAILURE, HttpStatus.NOT_FOUND.getReasonPhrase());
     }
 
     private Map<String, Object> getErrorAttributes(HttpServletRequest request, WebRequest webRequest, boolean includeStackTrace) {
