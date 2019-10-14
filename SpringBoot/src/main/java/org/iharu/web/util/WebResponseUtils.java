@@ -13,7 +13,7 @@ import org.iharu.type.ResultType;
  *
  * @author iHaru
  */
-public class HttpUtils {
+public class WebResponseUtils {
     
     public static WebResponseProto AuthorityInsufficient() {
         return GenResponse(BaseHttpStatus.FAILURE, "Permition denied");

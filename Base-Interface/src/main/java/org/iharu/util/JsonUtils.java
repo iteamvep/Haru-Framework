@@ -5,6 +5,7 @@
  */
 package org.iharu.util;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -26,16 +27,24 @@ import org.slf4j.LoggerFactory;
 /**
  *
  * @author x5171
+ * @param <T>
  */
 public class JsonUtils<T> {
-    static final Logger LOG = LoggerFactory.getLogger(JsonUtils.class);
+    private final static  Logger LOG = LoggerFactory.getLogger(JsonUtils.class);
     
-    public static <T> String object2json(T obj, ObjectMapper objectMapper){
-        if(objectMapper == null)
-            objectMapper = new ObjectMapper();
-//        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    private final static ObjectMapper objectMapper = new ObjectMapper();
+    
+    static {
+        objectMapper.setSerializationInclusion(JsonInclude.Include.ALWAYS);
+    }
+    
+    public static <T> String object2json(T obj, ObjectMapper _objectMapper){
         try {
-            return objectMapper.writeValueAsString(obj);
+            if(_objectMapper == null){
+                return objectMapper.writeValueAsString(obj);
+            } else {
+                return _objectMapper.writeValueAsString(obj);
+            }
         } catch (JsonProcessingException ex) {
             LOG.error("对象{}尝试转换为JSON时发生错误。错误代码为： {}{}", 
                     obj,
@@ -49,23 +58,68 @@ public class JsonUtils<T> {
         return object2json(obj, null);
     }
     
-    public static <T> T json2object(String json, TypeReference typeReference, ObjectMapper objectMapper) throws IOException {
-        if(objectMapper == null)
-            objectMapper = new ObjectMapper();
-//        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        if(!isJsonValid(json)){
-            LOG.info("JsonValid failed.");
+    public static <T> T json2object(String json, TypeReference typeReference, ObjectMapper _objectMapper) throws IOException {
+        if(json == null) {
+            LOG.warn("json2object - input json is empty");
             return null;
         }
-        return objectMapper.readValue(json, typeReference);
+        if(_objectMapper == null){
+            return objectMapper.readValue(json, typeReference);
+        } else {
+            return _objectMapper.readValue(json, typeReference);
+        }
     }
     
     public static <T> T json2object(String json, TypeReference typeReference) throws IOException {
         return json2object(json, typeReference, null);
     }
     
+    public static <T> T json2object(byte[] bytes, TypeReference typeReference, ObjectMapper _objectMapper) throws IOException {
+        if(bytes == null) {
+            LOG.warn("json2object - input json is empty");
+            return null;
+        }
+        if(_objectMapper == null){
+            return objectMapper.readValue(bytes, typeReference);
+        } else {
+            return _objectMapper.readValue(bytes, typeReference);
+        }
+    }
+    
     public static <T> T json2object(byte[] bytes, TypeReference typeReference) throws IOException {
-        return json2object(StringUtils.ByteArrayToString(bytes), typeReference);
+        return json2object(bytes, typeReference, null);
+    }
+    
+    public static <T> T json2object(String json, Class<?> clz, ObjectMapper _objectMapper) throws IOException {
+        if(json == null) {
+            LOG.warn("json2object - input json is empty");
+            return null;
+        }
+        if(_objectMapper == null){
+            return objectMapper.readValue(json, objectMapper.constructType(clz));
+        } else {
+            return _objectMapper.readValue(json, _objectMapper.constructType(clz));
+        }
+    }
+    
+    public static <T> T json2object(String json, Class<?> clz) throws IOException {
+        return json2object(json, clz, null);
+    }
+    
+    public static <T> T json2object(byte[] bytes, Class<?> clz, ObjectMapper _objectMapper) throws IOException {
+        if(bytes == null) {
+            LOG.warn("json2object - input bytes is empty");
+            return null;
+        }
+        if(_objectMapper == null){
+            return objectMapper.readValue(bytes, objectMapper.constructType(clz));
+        } else {
+            return _objectMapper.readValue(bytes, _objectMapper.constructType(clz));
+        }
+    }
+    
+    public static <T> T json2object(byte[] bytes, Class<?> clz) throws IOException {
+        return json2object(bytes, clz, null);
     }
     
     public static <T> T json2objectWithoutThrowException(String json, TypeReference typeReference) {
@@ -78,18 +132,54 @@ public class JsonUtils<T> {
     }
     
     public static <T> T json2objectWithoutThrowException(byte[] bytes, TypeReference typeReference) {
-        return json2objectWithoutThrowException(StringUtils.ByteArrayToString(bytes), typeReference);
+        try{
+            return json2object(bytes, typeReference, null);
+        } catch (IOException ex) {
+            LOG.info(ExceptionUtils.getStackTrace(ex));
+            return null;
+        }
+    }
+    
+    public static <T> T json2objectWithoutThrowException(String json, Class<?> clz) {
+        try{
+            return json2object(json, clz, null);
+        } catch (IOException ex) {
+            LOG.info(ExceptionUtils.getStackTrace(ex));
+            return null;
+        }
+    }
+    
+    public static <T> T json2objectWithoutThrowException(byte[] bytes, Class<?> clz) {
+        try{
+            return json2object(bytes, clz, null);
+        } catch (IOException ex) {
+            LOG.info(ExceptionUtils.getStackTrace(ex));
+            return null;
+        }
     }
     
     public static <T> T jsonnode2object(JsonNode start2Node, Class<T> clz) throws JsonProcessingException {
         return jsonnode2object(start2Node, clz, null);
     }
     
-    public static <T> T jsonnode2object(JsonNode start2Node, Class<T> clz, ObjectMapper objectMapper) throws JsonProcessingException {
-        if(objectMapper == null)
-            objectMapper = new ObjectMapper();
-//        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        return objectMapper.treeToValue(start2Node, clz);
+    public static <T> T jsonnode2object(JsonNode start2Node, Class<T> clz, ObjectMapper _objectMapper) throws JsonProcessingException {
+        if(_objectMapper == null){
+            return objectMapper.treeToValue(start2Node, clz);
+        } else {
+            return _objectMapper.treeToValue(start2Node, clz);
+        }
+    }
+    
+    public static <T> JsonNode object2jsonnode(T obj) throws JsonProcessingException {
+        return object2jsonnode(obj, null);
+    }
+    
+    public static <T> JsonNode object2jsonnode(T obj, ObjectMapper _objectMapper) throws JsonProcessingException {
+        if(_objectMapper == null){
+            return objectMapper.valueToTree(obj);
+        } else {
+            return _objectMapper.valueToTree(obj);
+        }
     }
     
     public static JsonNode json2jsonnode(String json) throws IOException {
@@ -97,17 +187,19 @@ public class JsonUtils<T> {
     }
     
     public static JsonNode diffObject(Object source, Object target) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode targetNode = objectMapper.valueToTree(target);
-        JsonNode sourceNode = objectMapper.valueToTree(source);
-        return JsonDiff.asJson(sourceNode, targetNode);
+        return JsonDiff.asJson(objectMapper.valueToTree(source), objectMapper.valueToTree(target));
     }
     
-    public static JsonNode diffObject(Object source, Object target, ObjectMapper objectMapper) {
-        if(objectMapper == null)
-            objectMapper = new ObjectMapper();
-        JsonNode targetNode = objectMapper.valueToTree(target);
-        JsonNode sourceNode = objectMapper.valueToTree(source);
+    public static JsonNode diffObject(Object source, Object target, ObjectMapper _objectMapper) {
+        JsonNode targetNode;
+        JsonNode sourceNode;
+        if(_objectMapper == null){
+            targetNode = objectMapper.valueToTree(target);
+            sourceNode = objectMapper.valueToTree(source);
+        } else {
+            targetNode = _objectMapper.valueToTree(target);
+            sourceNode = _objectMapper.valueToTree(source);
+        }
         return JsonDiff.asJson(sourceNode, targetNode);
     }
     
@@ -115,10 +207,12 @@ public class JsonUtils<T> {
         return StringUtils.StringToByteArray(object2json(obj));
     }
     
-    public static JsonNode json2jsonnode(String json, ObjectMapper objectMapper) throws IOException {
-        if(objectMapper == null)
-            objectMapper = new ObjectMapper();
-        return objectMapper.readTree(json);
+    public static JsonNode json2jsonnode(String json, ObjectMapper _objectMapper) throws IOException {
+        if(_objectMapper == null){
+            return objectMapper.readTree(json);
+        } else {
+            return _objectMapper.readTree(json);
+        }
     }
     
     public static boolean isJsonValid(final String json)

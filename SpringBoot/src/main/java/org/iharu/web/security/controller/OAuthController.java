@@ -14,7 +14,7 @@ import org.iharu.type.BaseHttpStatus;
 import org.iharu.web.WebAttributeConstants;
 import org.iharu.web.security.BaseSecurityController;
 import org.iharu.web.session.entity.SessionEntity;
-import org.iharu.web.util.HttpUtils;
+import org.iharu.web.util.WebResponseUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,9 +50,9 @@ public class OAuthController extends BaseSecurityController {
             session.setAttribute(WebAttributeConstants.SESSION_DATA, sessionEntity);
             webAuthProto.setToken(token);
             webAuthProto.setValid_timestamp(timestamp);
-            return HttpUtils.GenResponse(BaseHttpStatus.SUCCESS, webAuthProto);
+            return WebResponseUtils.GenResponse(BaseHttpStatus.SUCCESS, webAuthProto);
         } else {
-            return HttpUtils.AuthenticationFailed();
+            return WebResponseUtils.AuthenticationFailed();
         }
     }
     
@@ -66,7 +66,7 @@ public class OAuthController extends BaseSecurityController {
     public WebResponseProto authorize(@RequestBody String reqBody, HttpSession session) {
         SessionEntity sessionEntity = (SessionEntity) session.getAttribute(WebAttributeConstants.SESSION_DATA);
         if(sessionEntity == null || !sessionEntity.isOauth()) {
-            return HttpUtils.AuthorityInsufficient();
+            return WebResponseUtils.AuthorityInsufficient();
         }
         boolean verified = verifyAuthorization(reqBody, sessionEntity);
         if(verified){
@@ -75,9 +75,9 @@ public class OAuthController extends BaseSecurityController {
             String token = AuthorizationUtils.tokenGen();
             webAuthProto.setVoucher(token);
             webAuthProto.setValid_timestamp(timestamp);
-            return HttpUtils.GenResponse(BaseHttpStatus.SUCCESS, webAuthProto);
+            return WebResponseUtils.GenResponse(BaseHttpStatus.SUCCESS, webAuthProto);
         } else {
-            return HttpUtils.AuthorityInsufficient();
+            return WebResponseUtils.AuthorityInsufficient();
         }
     }
     

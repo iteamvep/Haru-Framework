@@ -1,0 +1,18 @@
+version = '0.1.0'
+group = 'org.iharu.crypto'
+
+jar {
+    enabled = true
+    baseName = 'crypto'
+    manifest {
+        attributes 'Implementation-Title': 'iHaru Framework Crypto Set', 'Implementation-Version': version
+    }
+}
+
+dependencies {
+    compileOnly project(":Base-Interface")
+    
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.61'
+    
+    testCompile project(":Base-Interface")
+}

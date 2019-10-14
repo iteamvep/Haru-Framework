@@ -5,6 +5,7 @@
  */
 package org.iharu.util;
 
+import java.util.List;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -24,6 +25,20 @@ public class StackTraceUtils {
     public static boolean IsCallerLegal(String clazz, String method){
         StackTraceElement stack = GetUpperCaller();
         return (stack.getClassName().equals(clazz) && stack.getMethodName().equals(method));
+    }
+    
+    public static boolean IsCallerLegal(List<String[]> list){
+        StackTraceElement stack = GetUpperCaller();
+        for(String[] caller:list){
+            if(caller[1] != null){
+                if (stack.getClassName().equals(caller[0]) && stack.getMethodName().equals(caller[1]))
+                    return true;
+            } else {
+                if (stack.getClassName().equals(caller[0]))
+                    return true;
+            }
+        }
+        return false;
     }
     
     public static boolean IsCallerLegal(String clazz){

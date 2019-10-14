@@ -7,13 +7,14 @@ package org.iharu.web.exception;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import static org.iharu.constant.ConstantValue.LINESEPARATOR;
 import org.iharu.exception.BaseException;
 import org.iharu.proto.web.WebResponseProto;
 import org.iharu.type.BaseHttpStatus;
 import org.iharu.type.ResultType;
-import org.iharu.web.util.HttpUtils;
+import org.iharu.web.util.WebResponseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -38,7 +39,7 @@ public class GlobalExceptionHandler {
    @ResponseBody
    public WebResponseProto CustomExceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception ex) {
         LOG.error("Web - CustomExceptionHandler left message： {}{}", LINESEPARATOR, ExceptionUtils.getStackTrace(ex));
-        return HttpUtils.GenResponse(BaseHttpStatus.ERROR, "SERVER ERROR");
+        return WebResponseUtils.GenResponse(BaseHttpStatus.ERROR, "SERVER ERROR");
     }
    
 //   @ExceptionHandler(AccessDeniedException.class) 
@@ -52,14 +53,18 @@ public class GlobalExceptionHandler {
    @ExceptionHandler(Exception.class)
    @ResponseBody
    public Object SystemExceptionHandler(Exception ex){
+        if(ex instanceof ClientAbortException){
+            LOG.error("Web - SystemExceptionHandler left message： {}", ex.getMessage());
+            return null;
+        }
         if(ex instanceof HttpMessageNotReadableException)
-            return HttpUtils.GenResponse(BaseHttpStatus.ERROR, "http body must not be empty");
+            return WebResponseUtils.GenResponse(BaseHttpStatus.ERROR, "http body must not be empty");
         if(ex instanceof HttpRequestMethodNotSupportedException)
-            return HttpUtils.GenResponse(BaseHttpStatus.ERROR, HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase());
+            return WebResponseUtils.GenResponse(BaseHttpStatus.ERROR, HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase());
         if(ex instanceof RequestRejectedException)
-            return HttpUtils.GenResponse(BaseHttpStatus.ERROR, HttpStatus.BAD_REQUEST.getReasonPhrase());
+            return WebResponseUtils.GenResponse(BaseHttpStatus.ERROR, HttpStatus.BAD_REQUEST.getReasonPhrase());
         LOG.error("Web - SystemExceptionHandler left message： {}{}", LINESEPARATOR, ExceptionUtils.getStackTrace(ex));
-        return HttpUtils.GenResponse(BaseHttpStatus.ERROR, "SERVER ERROR");
+        return WebResponseUtils.GenResponse(BaseHttpStatus.ERROR, "SERVER ERROR");
    }
 
 }

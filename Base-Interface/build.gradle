@@ -6,7 +6,7 @@ jar {
     baseName = 'base-support'
 //    classifier = ''
     manifest {
-        attributes 'Implementation-Title': 'Gradle Quickstart', 'Implementation-Version': version
+        attributes 'Implementation-Title': 'iHaru Framework Bootstrap', 'Implementation-Version': version
     }
 }
 

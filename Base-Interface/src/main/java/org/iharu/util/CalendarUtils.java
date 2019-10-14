@@ -46,6 +46,10 @@ public class CalendarUtils {
                 ZonedDateTime.now(ZoneId.of(TIMEZONEID)) : ZonedDateTime.now(ZoneId.of(zoneId));
     }
     
+    public static long getUTCTimestamp(){
+        return ZonedDateTime.now(ZoneId.of("UTC")).toInstant().toEpochMilli();
+    }
+    
     public static Map<String, String> GetAllZoneIdsAndItsOffSet() {
 
         Map<String, String> result = new HashMap<>();

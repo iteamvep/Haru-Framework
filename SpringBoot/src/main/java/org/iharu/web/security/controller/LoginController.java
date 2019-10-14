@@ -16,7 +16,7 @@ import org.iharu.type.ResultType;
 import org.iharu.web.WebAttributeConstants;
 import org.iharu.web.security.BaseSecurityController;
 import org.iharu.web.session.entity.SessionEntity;
-import org.iharu.web.util.HttpUtils;
+import org.iharu.web.util.WebResponseUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,9 +53,9 @@ public class LoginController extends BaseSecurityController {
             session.setAttribute(WebAttributeConstants.SESSION_DATA, sessionEntity);
             webAuthProto.setToken(token);
             webAuthProto.setValid_timestamp(timestamp);
-            return HttpUtils.GenResponse(BaseHttpStatus.SUCCESS, webAuthProto);
+            return WebResponseUtils.GenResponse(BaseHttpStatus.SUCCESS, webAuthProto);
         } else {
-            return HttpUtils.AuthenticationFailed();
+            return WebResponseUtils.AuthenticationFailed();
         }
     }
     
@@ -75,9 +75,9 @@ public class LoginController extends BaseSecurityController {
             session.setAttribute(WebAttributeConstants.SESSION_DATA, sessionEntity);
             webAuthProto.setToken(token);
             webAuthProto.setValid_timestamp(timestamp);
-            return HttpUtils.GenResponse(BaseHttpStatus.SUCCESS, webAuthProto);
+            return WebResponseUtils.GenResponse(BaseHttpStatus.SUCCESS, webAuthProto);
         } else {
-            return HttpUtils.AuthenticationFailed();
+            return WebResponseUtils.AuthenticationFailed();
         }
     }
     
@@ -85,12 +85,12 @@ public class LoginController extends BaseSecurityController {
     public WebResponseProto baseAuthentication(HttpSession session) {
         SessionEntity sessionEntity = (SessionEntity) session.getAttribute(WebAttributeConstants.SESSION_DATA);
         if(sessionEntity == null || sessionEntity.isOauth()) {
-            return HttpUtils.GenResponse(BaseHttpStatus.FAILURE, "You have not signed in.");
+            return WebResponseUtils.GenResponse(BaseHttpStatus.FAILURE, "You have not signed in.");
         } else {
             if(logout(sessionEntity)){
                 session.removeAttribute(WebAttributeConstants.SESSION_DATA);
             }
-            return HttpUtils.GenResponse(BaseHttpStatus.SUCCESS, "Goodbye");
+            return WebResponseUtils.GenResponse(BaseHttpStatus.SUCCESS, "Goodbye");
         }
     }
     

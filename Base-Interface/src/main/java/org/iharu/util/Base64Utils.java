@@ -7,8 +7,6 @@ package org.iharu.util;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.iharu.constant.ConstantValue;
 import org.slf4j.LoggerFactory;
 

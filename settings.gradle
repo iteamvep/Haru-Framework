@@ -3,6 +3,8 @@ rootProject.name = 'Haru-Framework'
 //https://segmentfault.com/a/1190000010129596
 include 'Base-Interface'
 include 'Spring','SpringBoot'
+include 'Cryptography'
+include 'Auth2'
 include 'JavaSwapping'
 
 // Find the directories containing a "build.gradle" file in the root directory

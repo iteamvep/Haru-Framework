@@ -12,7 +12,7 @@ import org.iharu.type.ResultType;
 import org.iharu.web.BaseController;
 import org.iharu.web.WebAttributeConstants;
 import org.iharu.web.session.entity.SessionEntity;
-import org.iharu.web.util.HttpUtils;
+import org.iharu.web.util.WebResponseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

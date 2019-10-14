@@ -9,7 +9,7 @@ import org.iharu.proto.web.WebResponseProto;
 import org.iharu.type.BaseHttpStatus;
 import org.iharu.type.ResultType;
 import org.iharu.web.BaseController;
-import org.iharu.web.util.HttpUtils;
+import org.iharu.web.util.WebResponseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -26,7 +26,7 @@ public class DefaultGlobalController extends BaseController {
     
     @RequestMapping("*")
     public WebResponseProto defaultResponse(){
-        return HttpUtils.GenResponse(BaseHttpStatus.SUCCESS, HttpStatus.OK.getReasonPhrase());
+        return WebResponseUtils.GenResponse(BaseHttpStatus.SUCCESS, HttpStatus.OK.getReasonPhrase());
     }
 
 }
