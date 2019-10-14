@@ -11,10 +11,11 @@ package org.iharu.type;
  * @author iHaru
  */
 public enum BaseHttpStatus{
-    UNKNOWNS("服务器无法处理当前请求", 200),
+    UNKNOWN("服务器无法处理当前请求", 200),
     ERROR("服务器发生错误", 200),
     FAILURE("失败", 200),
     SUCCESS("成功", 200),
+    UNRECOGNIZED("无法辨认当前请求", 200),
     
     OK("", 200),
     Created("", 201),
