@@ -12,7 +12,7 @@ package org.iharu.auth2.constant;
 public class ConstantValue {
     
     public final static String TEMP_FOLDER = 
-            String.format("%s/%s", System.getProperty("java.io.tmpdir"), "xtraffic");
+            String.format("%s/%s", System.getProperty("java.io.tmpdir"), "iharu-auth2");
     
     public final static String TIMEZONEID = "UTC";
     

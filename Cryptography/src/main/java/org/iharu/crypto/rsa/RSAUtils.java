@@ -57,11 +57,11 @@ public class RSAUtils {
         }
         return publicKey;
     }
-
-    public static PrivateKey GetPrivateKey(String base64Key){
+    
+    public static PrivateKey GetPrivateKey(byte[] key){
         PrivateKey privateKey = null;
         try {
-            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(DecryptBase64(base64Key));
+            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(key);
             KeyFactory keyFactory = KeyFactory.getInstance(KEY_RSA);
             privateKey = keyFactory.generatePrivate(keySpec);
 //            writePemFile(privateKey, "", "C:\\Users\\iTeamVEP\\Desktop\\rs\\priv");
@@ -130,11 +130,43 @@ public class RSAUtils {
         return null;
     }
     
-    public static byte[] EncryptWithPrivateKey(String data, String key) {
+    /**
+     * 
+     * @param data
+     * @param base64Key
+     * @return Base64-Encoded Bytes
+     */
+    public static byte[] EncryptWithPrivateKey(String data, String base64Key) {
+        return EncryptWithPrivateKey(data.getBytes(), DecryptBase64(base64Key));
+    }
+    
+    /**
+     * 
+     * @param data
+     * @param key
+     * @return Base64-Encoded Bytes
+     */
+    public static byte[] EncryptWithPrivateKey(String data, byte[] key) {
         return EncryptWithPrivateKey(data.getBytes(), key);
     }
     
-    public static byte[] EncryptWithPrivateKey(byte[] data, String key) {
+    /**
+     * 
+     * @param data
+     * @param base64Key
+     * @return Base64-Encoded Bytes
+     */
+    public static byte[] EncryptWithPrivateKey(byte[] data, String base64Key) {
+        return EncryptWithPrivateKey(data, DecryptBase64(base64Key));
+    }
+    
+    /**
+     * 
+     * @param data
+     * @param key
+     * @return Base64-Encoded Bytes
+     */
+    public static byte[] EncryptWithPrivateKey(byte[] data, byte[] key) {
         if(data == null || key == null)
             return null;
         try {
@@ -145,13 +177,19 @@ public class RSAUtils {
         return null;
     }
 
-    public static byte[] DecryptWithPrivateKey(String data, String key) {
-        if(data == null || key == null)
-            return null;
+    public static byte[] DecryptWithPrivateKey(String data, String base64Key) {
+        return DecryptWithPrivateKey(DecryptBase64(data.getBytes()), DecryptBase64(base64Key));
+    }
+    
+    public static byte[] DecryptWithPrivateKey(String data, byte[] key) {
         return DecryptWithPrivateKey(DecryptBase64(data.getBytes()), key);
     }
     
-    public static byte[] DecryptWithPrivateKey(byte[] data, String key) {
+    public static byte[] DecryptWithPrivateKey(byte[] data, String base64Key) {
+        return DecryptWithPrivateKey(data, DecryptBase64(base64Key));
+    }
+    
+    public static byte[] DecryptWithPrivateKey(byte[] data, byte[] key) {
         if(data == null || key == null)
             return null;
         try {

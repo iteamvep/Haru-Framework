@@ -13,6 +13,9 @@ dependencies {
     compileOnly project(":Base-Interface")
     
     compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.61'
+    // https://mvnrepository.com/artifact/de.mkammerer/argon2-jvm
+    compile group: 'de.mkammerer', name: 'argon2-jvm', version: '2.6'
+
     
     testCompile project(":Base-Interface")
 }

@@ -5,6 +5,7 @@
  */
 package org.iharu.web;
 
+import com.google.protobuf.GeneratedMessageV3;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -43,7 +44,9 @@ public class BaseProtobufController<T> {
     }
     
     protected WebResponseProto GenResponse(BaseHttpStatus httpStatus, String msg, T data) {
-        if(data instanceof byte[]){
+        if(data instanceof com.google.protobuf.GeneratedMessageV3){
+            return WebResponseConverter.Transfor(httpStatus, msg, ((GeneratedMessageV3) data).toByteArray());
+        } else if(data instanceof byte[]){
             return WebResponseConverter.Transfor(httpStatus, null, (byte[]) data);
         } else if(data instanceof Byte[]){
             return WebResponseConverter.Transfor(httpStatus, null, (byte[]) ArrayUtils.toPrimitive(data));

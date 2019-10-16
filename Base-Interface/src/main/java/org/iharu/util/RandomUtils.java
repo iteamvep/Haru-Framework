@@ -38,10 +38,11 @@ public class RandomUtils {
         byte[] bytes = new byte[targetLength];
         try {
             SecureRandom.getInstanceStrong().nextBytes(bytes);
+            return bytes;
         } catch (NoSuchAlgorithmException ex) {
             LOG.error("GenRandomBytes failed", ex);
         }
-        return bytes;
+        return null;
     }
     
     public static String GenTokenString(int targetStringLength) {
