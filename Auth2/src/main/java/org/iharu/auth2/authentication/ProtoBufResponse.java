@@ -5,43 +5,36 @@
  */
 package org.iharu.auth2.authentication;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
+import org.iharu.auth2.authentication.traffic.LoginWrapper;
+import org.iharu.auth2.utils.AuthenticationUtils;
 import org.iharu.crypto.aes.AesUtils;
-import org.iharu.util.Base64Utils;
 import org.slf4j.LoggerFactory;
+import protobuf.proto.iharu.C2S_LoginProto;
 
 /**
  *
  * @author iHaru
  */
-public class Handshake {
+public class ProtoBufResponse<T> {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(Handshake.class);
     
     private static final String DEFAULT_ENCRYPTION = "AES";
     
-    public static byte[] GenEncryptedToken(byte[] token, byte[] key){
-        return GenEncryptedToken(token, AesUtils.ParseSecretKey(key));
-    }
-    
-    public static byte[] GenEncryptedToken(byte[] token, SecretKey key){
+    public static byte[] EncryptResponse(byte[] body, SecretKey secretKey){
         try {
-            return AesUtils.Encrypt(token, key);
+            return AesUtils.Encrypt(body, secretKey);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException | InvalidKeySpecException ex) {
-            LOG.warn("GenEncryptedToken failed", ex);
+            LOG.warn("EncryptResponse failed", ex);
         }
         return null;
     }
-    
-    
-    
 }

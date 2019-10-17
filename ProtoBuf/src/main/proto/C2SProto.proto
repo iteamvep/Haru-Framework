@@ -1,0 +1,27 @@
+syntax = "proto3";
+package org.iharu.protobuf;
+
+option java_package = "protobuf.proto.iharu";
+option java_outer_classname = "C2SProto";
+option java_multiple_files = true;
+
+message C2S_LoginProto {
+	string username = 1;
+	string password = 2;
+	int64 timestamp = 3;
+	string inet = 4;
+	string macaddr = 5;
+	bytes config = 6;
+}
+
+message C2S_SSOProto {
+	string token = 1;
+	string voucher = 2;
+	bytes term = 3;
+	bytes payload = 4;
+	int64 timestamp = 5;
+	string inet = 6;
+	string macaddr = 7;
+	bytes config = 8;
+}
+

@@ -21,7 +21,7 @@ public final class ConstantValue {
     public final static String CLASSPATH;
     public final static String DEFAULT_TEMP_FOLDER = System.getProperty("java.io.tmpdir") + FILESEPARATOR + UUID.randomUUID().toString();
     public final static String CHARSET = "UTF-8";
-    public final static String TIMEZONEID = "Asia/Tokyo";
+    public final static String TIMEZONEID = "UTC";
     
     static{
         String _CLASSPATH = Thread.currentThread().getContextClassLoader().getResource("").getPath();

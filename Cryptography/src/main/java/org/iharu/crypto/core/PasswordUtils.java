@@ -22,7 +22,9 @@ public class PasswordUtils {
      * @return 
      */
     public static String HashPasswordWithSalt(String password, String salt){
-        return BytesUtils.encodeHexString(HmacUtils.SafeHashPasswordWithSalt(salt, password));
+        if(password == null)
+            return null;
+        return BytesUtils.encodeHexString(HmacUtils.SafeHashPasswordWithSalt(salt, password+salt));
     }
     
     public static boolean isPassordMatch(String encryptedPwd, String password, String salt){

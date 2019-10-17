@@ -1,0 +1,32 @@
+syntax = "proto3";
+package org.iharu.protobuf;
+
+option java_package = "protobuf.proto.iharu";
+option java_outer_classname = "S2CProto";
+option java_multiple_files = true;
+
+enum AuthorityType {
+	UNDEFINED = 0;
+}
+
+message S2C_LoginProto {
+	message Authorization {
+		AuthorityType auth_type = 1;
+		int32 count = 2;
+		int64 expiry = 3;
+		int64 active = 4;
+	}
+	string username = 1;
+	bytes token = 2;
+	repeated Authorization auth = 3;
+	bytes config = 4;
+}
+
+message S2C_SSOProto {
+	string voucher = 1;
+	bytes term = 2;
+	bytes payload = 3;
+	int64 expiry = 4;
+	bytes config = 5;
+}
+

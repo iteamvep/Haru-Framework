@@ -10,8 +10,8 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import java.nio.ByteBuffer;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.iharu.auth2.utils.AuthenticationUtils;
 import org.iharu.type.BaseHttpStatus;
+import org.iharu.util.CalendarUtils;
 import org.iharu.util.JsonUtils;
 import org.iharu.util.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -65,7 +65,7 @@ public class WebResponseConverter {
                         .setStatus(convertStatus(proto.getStatus()))
                         .setMsg(proto.getMsg()==null?proto.getStatus().getMsg():proto.getMsg())
                         .setPayload(data==null?ByteString.EMPTY:ByteString.copyFrom(data))
-                    .setTimestamp(AuthenticationUtils.GetTimestamp())
+                    .setTimestamp(CalendarUtils.getZonedTimestamp())
                     .setSign(data==null?"":DigestUtils.sha512Hex(data))
                     .build();
         return websocketWapper;
@@ -77,7 +77,7 @@ public class WebResponseConverter {
                         .setStatus(convertStatus(status))
                         .setMsg(msg==null?status.getMsg():msg)
                         .setPayload(payload==null?ByteString.EMPTY:ByteString.copyFrom(payload))
-                    .setTimestamp(AuthenticationUtils.GetTimestamp())
+                    .setTimestamp(CalendarUtils.getZonedTimestamp())
                     .setSign(payload==null?"":DigestUtils.sha512Hex(payload))
                     .build();
         return websocketWapper;

@@ -135,22 +135,24 @@ public class AesUtils {
         return Encrypt(data, GenKey(password, salt));
     }
     
-    private static byte[] decrypt(byte[] data, byte[] key, AESEncryptType encryptType) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, InvalidKeySpecException {
-        if(data == null || key == null)
+    private static byte[] decrypt(byte[] data, SecretKey secretKey, AESEncryptType encryptType) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, InvalidKeySpecException {
+        if(data == null || secretKey == null)
             return null;
         Cipher cipher = Cipher.getInstance(encryptType.getName());
-        SecretKey aesSecret = new SecretKeySpec(key, KEY);
         if(AESEncryptType.GCM == encryptType){
             // Create GCMParameterSpec
             GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(GCM_TAG_LENGTH * 8, Arrays.copyOfRange(data, 0, encryptType.getIvLength()));
             // Initialize Cipher for DECRYPT_MODE
-            cipher.init(Cipher.DECRYPT_MODE, aesSecret, gcmParameterSpec);
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, gcmParameterSpec);
         } else {
             IvParameterSpec ivps = new IvParameterSpec(Arrays.copyOfRange(data, 0, encryptType.getIvLength()));
-            cipher.init(Cipher.DECRYPT_MODE, aesSecret, ivps);
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, ivps);
         }
-        
         return cipher.doFinal(Arrays.copyOfRange(data, encryptType.getIvLength(), data.length));
+    }
+    
+    private static byte[] decrypt(byte[] data, byte[] key, AESEncryptType encryptType) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, InvalidKeySpecException {
+        return decrypt(data, new SecretKeySpec(key, KEY), encryptType);
     }
     
     public static byte[] DecryptWithoutException(byte[] data, byte[] key) {
@@ -169,6 +171,10 @@ public class AesUtils {
             LOG.error("Decrypt error", ex);
         }
         return null;
+    }
+    
+    public static byte[] Decrypt(byte[] data, SecretKey secretKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, InvalidKeySpecException {
+        return decrypt(data, secretKey, DEFAULT_ENCRYPTION);
     }
     
     public static byte[] Decrypt(byte[] data, byte[] key, AESEncryptType encryptType) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, InvalidKeySpecException {

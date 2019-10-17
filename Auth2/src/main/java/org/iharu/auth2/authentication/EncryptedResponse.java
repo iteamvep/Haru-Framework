@@ -15,33 +15,24 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import org.iharu.crypto.aes.AesUtils;
-import org.iharu.util.Base64Utils;
 import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author iHaru
  */
-public class Handshake {
+public class EncryptedResponse {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(Handshake.class);
     
     private static final String DEFAULT_ENCRYPTION = "AES";
     
-    public static byte[] GenEncryptedToken(byte[] token, byte[] key){
-        return GenEncryptedToken(token, AesUtils.ParseSecretKey(key));
-    }
-    
-    public static byte[] GenEncryptedToken(byte[] token, SecretKey key){
+    public static byte[] Encrypt(byte[] resp, SecretKey secretKey){
         try {
-            return AesUtils.Encrypt(token, key);
+            return AesUtils.Encrypt(resp, secretKey);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException | InvalidKeySpecException ex) {
-            LOG.warn("GenEncryptedToken failed", ex);
+            LOG.warn("Encrypt resp failed", ex);
         }
         return null;
     }
-    
-    
-    
 }

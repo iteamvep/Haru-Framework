@@ -28,7 +28,7 @@ public class AuthenticationUtils {
     
     public static long GetTimestamp(){
 //        long createdDateUtc = Timestamp.from(CalendarUtils.getZonedDateTime(TIMEZONEID).toInstant()).getTime();
-        return CalendarUtils.getZonedDateTime(TIMEZONEID).toInstant().toEpochMilli();
+        return CalendarUtils.getUTCTimestamp();
     }
     
     public static boolean isAuthRequestTimeout(long timestamp){

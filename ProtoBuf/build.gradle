@@ -14,7 +14,6 @@ jar {
 
 dependencies {
     compileOnly project(":Base-Interface")
-    compileOnly project(":Auth2")
     compileOnly project(":SpringBoot")
     
     compile group: 'com.google.protobuf', name: 'protobuf-java', version: '3.7.1'
@@ -59,6 +58,6 @@ sourceSets {
     // remove the test configuration - at least in your example you don't have a special test proto file
 }
 
-//clean {
-//    delete protobuf.generatedFilesBaseDir
-//}
+clean {
+    delete protobuf.generatedFilesBaseDir
+}

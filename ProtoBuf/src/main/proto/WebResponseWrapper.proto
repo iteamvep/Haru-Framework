@@ -1,0 +1,30 @@
+syntax = "proto3";
+package org.iharu.protobuf;
+
+option java_package = "protobuf.proto.iharu";
+option java_outer_classname = "WebResponse";
+option java_multiple_files = true;
+
+message WebResponseProto {
+    enum Status {
+        FAILURE = 0;
+        SUCCESS = 1;
+        ERROR = 2;
+		UNKNOWN = 3;
+    }
+    Status status = 1;
+	string msg = 2;
+	bytes payload = 3;
+	string sign = 4;
+	int64 timestamp = 5;
+}
+
+message HandshakeProto {
+	bytes pk = 1;
+	//for stateless server
+	bytes token = 2;
+	bytes config = 3;
+	string sign = 4;
+	int64 timestamp = 5;
+}
+
