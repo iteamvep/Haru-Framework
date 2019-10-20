@@ -12,8 +12,10 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.security.*;
+import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -54,6 +56,22 @@ public class RSAUtils {
             LOG.error("getPrivateKey error", ex);
         } catch (InvalidKeySpecException ex) {
             LOG.error("getPrivateKey error", ex);
+        }
+        return publicKey;
+    }
+    
+    public static PublicKey GetPublicKeyFromPrivateKey(RSAPrivateCrtKey privk){
+        PublicKey publicKey = null;
+        try{
+            RSAPublicKeySpec publicKeySpec = new java.security.spec.RSAPublicKeySpec(privk.getModulus(), privk.getPublicExponent());
+
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            return keyFactory.generatePublic(publicKeySpec);
+//            return RSAPublicKeySpec(privk.getModulus(), privk.getPublicExponent());
+        } catch (NoSuchAlgorithmException ex) {
+            LOG.error("getPublicKeyFromPrivateKey error", ex);
+        } catch (InvalidKeySpecException ex) {
+            LOG.error("getPublicKeyFromPrivateKey error", ex);
         }
         return publicKey;
     }

@@ -8,6 +8,8 @@ package org.iharu.util;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Random;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -47,6 +49,18 @@ public class RandomUtils {
     
     public static String GenTokenString(int targetStringLength) {
         return Base64Utils.EncryptBase64ToString(GenRandomBytes(targetStringLength));
+    }
+    
+    public Stream<Character> getRandomSpecialChars(int count) {
+        Random random = new SecureRandom();
+        IntStream specialChars = random.ints(count, 33, 45);
+        return specialChars.mapToObj(data -> (char) data);
+    }
+    
+    public Stream<Character> getRandomChars(int count, int randomNumberOrigin, int randomNumberBound) {
+        Random random = new SecureRandom();
+        IntStream specialChars = random.ints(count, randomNumberOrigin, randomNumberBound);
+        return specialChars.mapToObj(data -> (char) data);
     }
     
 }
