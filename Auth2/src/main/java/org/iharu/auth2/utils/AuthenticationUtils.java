@@ -6,8 +6,6 @@
 package org.iharu.auth2.utils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import java.util.Date;
-import static org.iharu.auth2.constant.ConstantValue.TIMEZONEID;
 import org.iharu.auth2.authentication.entity.TokenAuthEntity;
 import org.iharu.crypto.rsa.RSAUtils;
 import org.iharu.util.CalendarUtils;

@@ -133,7 +133,7 @@ public class WebResponseConverter {
         } else {
             data = JsonUtils.object2json(_data);
         }
-        return StringUtils.StringToByteArray(data);
+        return ByteString.copyFromUtf8(data).toByteArray();
     }
     
 }

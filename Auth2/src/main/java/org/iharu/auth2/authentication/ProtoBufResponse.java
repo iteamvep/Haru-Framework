@@ -5,7 +5,6 @@
  */
 package org.iharu.auth2.authentication;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -15,12 +14,9 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-import org.iharu.auth2.authentication.traffic.LoginWrapper;
-import org.iharu.auth2.utils.AuthenticationUtils;
 import org.iharu.crypto.aes.AesUtils;
 import org.iharu.crypto.rsa.RSAUtils;
 import org.slf4j.LoggerFactory;
-import protobuf.proto.iharu.C2S_LoginProto;
 
 /**
  *
