@@ -22,8 +22,10 @@ import org.iharu.util.JsonUtils;
  * @author iHaru
  */
 public class WebsocketUtils {
+    private static final WebsocketProto PING = new WebsocketProto(ResultType.SUCCESS, new WebsocketSystemProto(WebsocketSystemMessageType.PING, null));
+    private static final WebsocketProto PONG = new WebsocketProto(ResultType.SUCCESS, new WebsocketSystemProto(WebsocketSystemMessageType.PONG, null));
     
-    public static <T> WebsocketProto SystemMessageEncoder(ResultType resultType, WebsocketSystemMessageType systemMessageType, String data) {
+    public static WebsocketProto SystemMessageEncoder(ResultType resultType, WebsocketSystemMessageType systemMessageType, String data) {
         return new WebsocketProto(resultType, new WebsocketSystemProto(systemMessageType, data));
     }
     
@@ -33,8 +35,20 @@ public class WebsocketUtils {
         return new WebsocketProto(resultType, module, JsonUtils.object2json(data));
     }
     
+    public static WebsocketProto PINGMessage() {
+        return PING;
+    }
+    
+    public static WebsocketProto PONGMessage() {
+        return PONG;
+    }
+    
     public static WebsocketProto MessageDecoder(String proto) throws IOException {
         return JsonUtils.json2object(proto, new TypeReference<WebsocketProto>(){});
+    }
+    
+    public static WebsocketSystemProto SystemMessageDecoder(String proto) throws IOException {
+        return JsonUtils.json2object(proto, new TypeReference<WebsocketSystemProto>(){});
     }
     
 }

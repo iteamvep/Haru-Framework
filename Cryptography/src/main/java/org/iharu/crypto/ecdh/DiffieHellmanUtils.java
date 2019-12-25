@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
 /**
  *
  * @author iHaru
+ * https://www.cnblogs.com/xinzhao/p/8963724.html
  * http://www.bouncycastle.org/wiki/pages/viewpage.action?pageId=362269
  * https://neilmadden.blog/2016/05/20/ephemeral-elliptic-curve-diffie-hellman-key-agreement-in-java/
  * https://studygolang.com/articles/22761
@@ -58,8 +59,8 @@ public class DiffieHellmanUtils {
     // ANSI X9.62 standard defines a 65-byte format for representing such X and Y; 
     // basically, a first byte of value 0x04, followed by X over exactly 32 bytes (in big-endian notation), 
     // then Y over another 32 bytes
-    // a point in X9.62 format is either 67 octets (Java bytes) 
-    // if compressed or 133 octets if uncompressed, never any other length
+    // a point in X9.62 format is either 67 octets (Java bytes) if compressed
+    // or 133 octets if uncompressed, never any other length
     private static final String DEFAULT_CURVE = "prime256v1";
     
     //NIST P-256 curve, which has been specified to work in a 256-bit field, 

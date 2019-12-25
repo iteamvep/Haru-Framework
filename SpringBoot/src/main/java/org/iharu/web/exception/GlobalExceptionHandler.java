@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.web.firewall.RequestRejectedException;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 //import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -59,6 +60,8 @@ public class GlobalExceptionHandler {
         }
         if(ex instanceof HttpMessageNotReadableException)
             return WebResponseUtils.GenResponse(BaseHttpStatus.ERROR, "http body must not be empty");
+        if(ex instanceof HttpMediaTypeNotAcceptableException)
+            return WebResponseUtils.GenResponse(BaseHttpStatus.ERROR, HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase());
         if(ex instanceof HttpRequestMethodNotSupportedException)
             return WebResponseUtils.GenResponse(BaseHttpStatus.ERROR, HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase());
         if(ex instanceof RequestRejectedException)

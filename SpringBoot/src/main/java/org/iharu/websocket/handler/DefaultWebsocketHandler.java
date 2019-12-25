@@ -125,12 +125,22 @@ public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
      * @return
      */
     public boolean sendMessageToUser(String userId, byte[] payload) {
-        if(payload == null)
-            return false;
         if (!GetUsers().containsKey(userId)) {
             return false;
         }
-        WebSocketSession session = GetUsers().get(userId);
+
+        return sendMessageToUser(GetUsers().get(userId), payload);
+    }
+    
+    /**
+     * 发送信息给指定用户
+     * @param session
+     * @param payload
+     * @return
+     */
+    public boolean sendMessageToUser(WebSocketSession session, byte[] payload) {
+        if(payload == null)
+            return false;
 
         if (!session.isOpen()) {
             return false;
@@ -138,8 +148,8 @@ public abstract class DefaultWebsocketHandler<T> extends TextWebSocketHandler {
         try {
             session.sendMessage(new BinaryMessage(payload));
             return true;
-        } catch (IOException e) {
-            GetImplLogger().error("user: {}, send message failed. {}", userId, ExceptionUtils.getStackTrace(e));
+        } catch (IOException ex) {
+            GetImplLogger().error("user: {}, send message failed.", session.getId(), ex);
         }
         return false;
     }

@@ -23,6 +23,7 @@ public enum WebsocketSystemMessageType {
     ACCESS_DENIED(),
     PERMISSION_DENIED(),
     MODULE_STATUS_NOTIFY(),
-    PING()
+    PING(),
+    PONG()
     
 }

@@ -26,10 +26,7 @@ public class StringUtils {
     }
 
     public static boolean isNullOrWhiteSpace(String s){
-        if(s==null || s.trim().isEmpty()){
-            return true;
-        }
-        return false;
+        return s == null || s.trim().isEmpty();
     }
     
     public static byte[] StringToByteArray(String str){
