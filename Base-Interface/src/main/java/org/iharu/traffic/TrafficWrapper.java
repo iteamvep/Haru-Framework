@@ -5,21 +5,32 @@
  */
 package org.iharu.traffic;
 
+import java.util.Arrays;
+import java.util.List;
 import org.iharu.type.ResultType;
 
 /**
  *
  * @author iHaru
  */
-public class TrafficWrapper {
+public class TrafficWrapper<T> {
     protected boolean success;
     protected ResultType result;
+    private T resultValue;
     protected String msg;
+    protected int code;
+    protected List<Object> params;
     protected RuntimeException exception;
     
     public TrafficWrapper(){
         this.success = true;
         this.result = ResultType.SUCCESS;
+    }
+    
+    public TrafficWrapper(T value){
+        this.success = true;
+        this.result = ResultType.SUCCESS;
+        this.resultValue = value;
     }
     
     public TrafficWrapper(boolean rs, String msg){
@@ -42,6 +53,21 @@ public class TrafficWrapper {
         this.success = false;
         this.result = ResultType.FAILURE;
         this.msg = msg;
+    }
+    
+    public TrafficWrapper(int code, String msg){
+        this.success = false;
+        this.result = ResultType.FAILURE;
+        this.msg = msg;
+        this.code = code;
+    }
+    
+    public TrafficWrapper(int code, String msg, Object ...params){
+        this.success = false;
+        this.result = ResultType.FAILURE;
+        this.msg = msg;
+        this.code = code;
+        this.params = Arrays.asList(params);
     }
 
     /**
@@ -84,5 +110,47 @@ public class TrafficWrapper {
      */
     public void setMsg(String msg) {
         this.msg = msg;
+    }
+
+    /**
+     * @return the code
+     */
+    public int getCode() {
+        return code;
+    }
+
+    /**
+     * @param code the code to set
+     */
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    /**
+     * @return the params
+     */
+    public List<Object> getParams() {
+        return params;
+    }
+
+    /**
+     * @param params the params to set
+     */
+    public void setParams(List<Object> params) {
+        this.params = params;
+    }
+    
+    /**
+     * @return the resultValue
+     */
+    public T getResultValue() {
+        return resultValue;
+    }
+
+    /**
+     * @param resultValue the resultValue to set
+     */
+    public void setResultValue(T resultValue) {
+        this.resultValue = resultValue;
     }
 }

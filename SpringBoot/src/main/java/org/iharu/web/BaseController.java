@@ -5,6 +5,8 @@
  */
 package org.iharu.web;
 
+import java.util.Arrays;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -32,23 +34,52 @@ public class BaseController<T> {
 //        response.setHeader("Access-Control-Allow-Origin", "*");
     }  
 
-    protected WebResponseProto GenBaseResponse(BaseHttpStatus httpStatus, String msg) {
+    protected static WebResponseProto GenBaseResponse(BaseHttpStatus httpStatus, String msg) {
         WebResponseProto responseBody = new WebResponseProto();
         responseBody.setStatus(httpStatus);
         responseBody.setMsg(msg);
         return responseBody;
     }
     
-    protected WebResponseProto GenResponse(BaseHttpStatus httpStatus, T data) {
+    protected static <T> WebResponseProto GenResponse(BaseHttpStatus httpStatus, T data) {
         WebResponseProto responseBody = new WebResponseProto();
         responseBody.setStatus(httpStatus);
         responseBody.setData(data);
         return responseBody;
     }
     
-    protected WebResponseProto GenResponse(BaseHttpStatus httpStatus, String msg, T data) {
+    protected static <T> WebResponseProto GenResponse(BaseHttpStatus httpStatus, String msg, T data) {
         WebResponseProto responseBody = new WebResponseProto();
         responseBody.setStatus(httpStatus);
+        responseBody.setMsg(msg);
+        responseBody.setData(data);
+        return responseBody;
+    }
+    
+    protected static <T> WebResponseProto GenResponse(BaseHttpStatus httpStatus, int code, String msg, T data) {
+        WebResponseProto responseBody = new WebResponseProto();
+        responseBody.setStatus(httpStatus);
+        responseBody.setCode(code);
+        responseBody.setMsg(msg);
+        responseBody.setData(data);
+        return responseBody;
+    }
+    
+    protected static <T> WebResponseProto GenResponse(BaseHttpStatus httpStatus, int code, List<Object> params, String msg, T data) {
+        WebResponseProto responseBody = new WebResponseProto();
+        responseBody.setStatus(httpStatus);
+        responseBody.setCode(code);
+        responseBody.setParams(params);
+        responseBody.setMsg(msg);
+        responseBody.setData(data);
+        return responseBody;
+    }
+    
+    protected static <T> WebResponseProto GenResponse(BaseHttpStatus httpStatus, int code, String msg, T data, Object ...params) {
+        WebResponseProto responseBody = new WebResponseProto();
+        responseBody.setStatus(httpStatus);
+        responseBody.setCode(code);
+        responseBody.setParams(Arrays.asList(params));
         responseBody.setMsg(msg);
         responseBody.setData(data);
         return responseBody;

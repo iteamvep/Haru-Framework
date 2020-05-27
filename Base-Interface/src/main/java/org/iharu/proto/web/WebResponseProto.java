@@ -5,6 +5,7 @@
  */
 package org.iharu.proto.web;
 
+import java.util.List;
 import org.iharu.type.BaseHttpStatus;
 
 /**
@@ -14,6 +15,8 @@ import org.iharu.type.BaseHttpStatus;
 public class WebResponseProto<T> {
     
     private BaseHttpStatus status;
+    private int code;
+    private List<Object> params;
     private String msg;
     private T data;
 
@@ -57,6 +60,34 @@ public class WebResponseProto<T> {
      */
     public void setData(T data) {
         this.data = data;
+    }
+
+    /**
+     * @return the code
+     */
+    public int getCode() {
+        return code;
+    }
+
+    /**
+     * @param code the code to set
+     */
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    /**
+     * @return the params
+     */
+    public List<Object> getParams() {
+        return params;
+    }
+
+    /**
+     * @param params the params to set
+     */
+    public void setParams(List<Object> params) {
+        this.params = params;
     }
 
 }
