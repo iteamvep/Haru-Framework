@@ -7,6 +7,7 @@ package org.iharu.util;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -39,7 +40,7 @@ public class RandomUtils {
     public static byte[] GenRandomBytes(int targetLength) {
         byte[] bytes = new byte[targetLength];
         try {
-            SecureRandom.getInstanceStrong().nextBytes(bytes);
+            SecureRandomUtils.getInstance().nextBytes(bytes);
             return bytes;
         } catch (NoSuchAlgorithmException ex) {
             LOG.error("GenRandomBytes failed", ex);

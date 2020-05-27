@@ -12,8 +12,7 @@ import java.security.interfaces.ECPublicKey;
 import javax.crypto.KeyAgreement;
 
 import java.util.*;
-import java.nio.ByteBuffer;
-import java.io.Console;
+//import java.io.Console;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.spec.ECFieldFp;
@@ -23,24 +22,18 @@ import java.security.spec.ECPoint;
 import java.security.spec.ECPublicKeySpec;
 import java.security.spec.EllipticCurve;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.SecretKey;
-import javax.xml.bind.DatatypeConverter;
 
-import static javax.xml.bind.DatatypeConverter.printHexBinary;
-import static javax.xml.bind.DatatypeConverter.parseHexBinary;
+//import static javax.xml.bind.DatatypeConverter.printHexBinary;
+//import static javax.xml.bind.DatatypeConverter.parseHexBinary;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.interfaces.ECPrivateKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
-import org.bouncycastle.jce.spec.ECPrivateKeySpec;
-import org.bouncycastle.util.encoders.Hex;
 import org.iharu.crypto.aes.AesUtils;
-import org.iharu.crypto.util.HexEncoder;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -369,45 +362,45 @@ public class DiffieHellmanUtils {
         return null;
     }
     
-    public static void test() throws Exception {
-        Console console = System.console();
-        // Generate ephemeral ECDH keypair
-        KeyPairGenerator kpg = KeyPairGenerator.getInstance("EC");
-        kpg.initialize(256);
-        KeyPair kp = kpg.generateKeyPair();
-        byte[] ourPk = kp.getPublic().getEncoded();
-
-        // Display our public key
-        console.printf("Public Key: %s%n", printHexBinary(ourPk));
-
-        // Read other's public key:
-        byte[] otherPk = parseHexBinary(console.readLine("Other PK: "));
-
-        KeyFactory kf = KeyFactory.getInstance("EC");
-        X509EncodedKeySpec pkSpec = new X509EncodedKeySpec(otherPk);
-        PublicKey otherPublicKey = kf.generatePublic(pkSpec);
-
-        // Perform key agreement
-        KeyAgreement ka = KeyAgreement.getInstance("ECDH");
-        ka.init(kp.getPrivate());
-        ka.doPhase(otherPublicKey, true);
-
-        // Read shared secret
-        byte[] sharedSecret = ka.generateSecret();
-        console.printf("Shared secret: %s%n", printHexBinary(sharedSecret));
-
-        // Derive a key from the shared secret and both public keys
-        MessageDigest hash = MessageDigest.getInstance("SHA-256");
-        hash.update(sharedSecret);
-        // Simple deterministic ordering
-        List<ByteBuffer> keys = Arrays.asList(ByteBuffer.wrap(ourPk), ByteBuffer.wrap(otherPk));
-        Collections.sort(keys);
-        hash.update(keys.get(0));
-        hash.update(keys.get(1));
-
-        byte[] derivedKey = hash.digest();
-        console.printf("Final key: %s%n", printHexBinary(derivedKey));
-      }
+//    public static void test() throws Exception {
+//        Console console = System.console();
+//        // Generate ephemeral ECDH keypair
+//        KeyPairGenerator kpg = KeyPairGenerator.getInstance("EC");
+//        kpg.initialize(256);
+//        KeyPair kp = kpg.generateKeyPair();
+//        byte[] ourPk = kp.getPublic().getEncoded();
+//
+//        // Display our public key
+//        console.printf("Public Key: %s%n", printHexBinary(ourPk));
+//
+//        // Read other's public key:
+//        byte[] otherPk = parseHexBinary(console.readLine("Other PK: "));
+//
+//        KeyFactory kf = KeyFactory.getInstance("EC");
+//        X509EncodedKeySpec pkSpec = new X509EncodedKeySpec(otherPk);
+//        PublicKey otherPublicKey = kf.generatePublic(pkSpec);
+//
+//        // Perform key agreement
+//        KeyAgreement ka = KeyAgreement.getInstance("ECDH");
+//        ka.init(kp.getPrivate());
+//        ka.doPhase(otherPublicKey, true);
+//
+//        // Read shared secret
+//        byte[] sharedSecret = ka.generateSecret();
+//        console.printf("Shared secret: %s%n", printHexBinary(sharedSecret));
+//
+//        // Derive a key from the shared secret and both public keys
+//        MessageDigest hash = MessageDigest.getInstance("SHA-256");
+//        hash.update(sharedSecret);
+//        // Simple deterministic ordering
+//        List<ByteBuffer> keys = Arrays.asList(ByteBuffer.wrap(ourPk), ByteBuffer.wrap(otherPk));
+//        Collections.sort(keys);
+//        hash.update(keys.get(0));
+//        hash.update(keys.get(1));
+//
+//        byte[] derivedKey = hash.digest();
+//        console.printf("Final key: %s%n", printHexBinary(derivedKey));
+//      }
     
     public static void fnc() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, InvalidKeySpecException, InvalidKeyException{
         Security.addProvider(new BouncyCastleProvider());
@@ -423,8 +416,8 @@ public class DiffieHellmanUtils {
         byte[] alicePubEncoded = alicePub.getEncoded();
         byte[] alicePvtEncoded = alicePvt.getEncoded();
 
-        System.out.println("Alice public: " + DatatypeConverter.printHexBinary(alicePubEncoded));
-        System.out.println("Alice private: " + DatatypeConverter.printHexBinary(alicePvtEncoded));
+//        System.out.println("Alice public: " + DatatypeConverter.printHexBinary(alicePubEncoded));
+//        System.out.println("Alice private: " + DatatypeConverter.printHexBinary(alicePvtEncoded));
 
 
         // POST hex(alicePubEncoded)
@@ -444,14 +437,14 @@ public class DiffieHellmanUtils {
         byte[] bobPubEncoded = bobPub.getEncoded();
         byte[] bobPvtEncoded = bobPvt.getEncoded();
 
-        System.out.println("Bob public: " + DatatypeConverter.printHexBinary(bobPubEncoded));
-        System.out.println("Bob private: " + DatatypeConverter.printHexBinary(bobPvtEncoded));
+//        System.out.println("Bob public: " + DatatypeConverter.printHexBinary(bobPubEncoded));
+//        System.out.println("Bob private: " + DatatypeConverter.printHexBinary(bobPvtEncoded));
 
         KeyAgreement bobKeyAgree = KeyAgreement.getInstance("ECDH");
         bobKeyAgree.init(bobPvt);
         bobKeyAgree.doPhase(remoteAlicePub, true);
 
-        System.out.println("Bob secret: " + DatatypeConverter.printHexBinary(bobKeyAgree.generateSecret()));
+//        System.out.println("Bob secret: " + DatatypeConverter.printHexBinary(bobKeyAgree.generateSecret()));
 
 
         // RESPOND hex(bobPubEncoded)
@@ -465,14 +458,14 @@ public class DiffieHellmanUtils {
         aliceKeyAgree.init(alicePvt);
         aliceKeyAgree.doPhase(remoteBobPub, true);
 
-        System.out.println("Alice secret: " + DatatypeConverter.printHexBinary(aliceKeyAgree.generateSecret()));
+//        System.out.println("Alice secret: " + DatatypeConverter.printHexBinary(aliceKeyAgree.generateSecret()));
     }
     
     
     private static ECPublicKey decodeECPublicKey(ECParameterSpec params, final byte[] pubkey) {
         try {
             int keySizeBytes = params.getOrder().bitLength() / Byte.SIZE;
-            System.out.println("decodeECPublicKey - keySizeBytes: " + keySizeBytes);
+//            System.out.println("decodeECPublicKey - keySizeBytes: " + keySizeBytes);
 //            ECPoint apoint = params.getGenerator();
 //            BigInteger x = apoint.getAffineX(), y = apoint.getAffineY();
 //            // construct point plus params to pubkey

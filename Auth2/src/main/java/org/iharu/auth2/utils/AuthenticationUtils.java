@@ -6,8 +6,10 @@
 package org.iharu.auth2.utils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.Arrays;
 import org.iharu.auth2.authentication.entity.TokenAuthEntity;
 import org.iharu.crypto.rsa.RSAUtils;
+import org.iharu.util.Base64Utils;
 import org.iharu.util.CalendarUtils;
 import org.iharu.util.JsonUtils;
 import org.iharu.util.RandomUtils;
@@ -32,21 +34,29 @@ public class AuthenticationUtils {
     public static boolean isAuthRequestTimeout(long timestamp){
         long ts = GetTimestamp();
         long diff = ts - timestamp;
-        LOG.info("{} - {} {}", ts, timestamp, diff);
+        LOG.debug("{} - {} {}", ts, timestamp, diff);
 //        LOG.info("{} - {}", new Date(ts).toString(), new Date(timestamp).toString());
         return  (diff > 0 ? diff : -diff) > 900 * 1000;
     }
     
     public static String GenVoucher(){
-        return RandomUtils.GenRandomString(20);
+        return GenToken(20);
+    }
+    
+    public static String GenToken(int len){
+        return Base64Utils.EncryptBase64ToString(RandomUtils.GenRandomBytes(len));
     }
     
     public static String GenToken(){
-        return RandomUtils.GenTokenString(20);
+        return GenToken(20);
+    }
+    
+    public static byte[] GenTokenBytes(int len){
+        return RandomUtils.GenRandomBytes(len);
     }
     
     public static byte[] GenTokenBytes(){
-        return RandomUtils.GenRandomBytes(20);
+        return GenTokenBytes(20);
     }
     
 }
