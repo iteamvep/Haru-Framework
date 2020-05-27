@@ -7,12 +7,10 @@ package org.iharu.web.security.controller;
 
 import javax.servlet.http.HttpSession;
 import org.iharu.authorization.util.AuthorizationUtils;
-import org.iharu.cache.SessionCache;
 import org.iharu.proto.web.WebAuthProto;
 import org.iharu.proto.web.WebResponseProto;
 import org.iharu.type.BaseAuthorizationType;
 import org.iharu.type.BaseHttpStatus;
-import org.iharu.type.ResultType;
 import org.iharu.web.WebAttributeConstants;
 import org.iharu.web.security.BaseSecurityController;
 import org.iharu.web.session.entity.SessionEntity;

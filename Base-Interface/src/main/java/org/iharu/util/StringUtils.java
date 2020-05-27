@@ -6,8 +6,6 @@
 package org.iharu.util;
 
 import java.io.UnsupportedEncodingException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.iharu.constant.ConstantValue;
 import static org.iharu.util.CommontUtils.LOG;
 
@@ -19,8 +17,13 @@ public class StringUtils {
     private StringUtils() { }   
 
     public static boolean isNullOrEmpty(String s){
-        if(s==null || s.isEmpty()){
-            return true;
+        return s==null || s.isEmpty();
+    }
+    
+    public static boolean isAnyNullOrWhiteSpace(String ...strings){
+        for(String string:strings){
+            if(string == null || string.trim().isEmpty())
+                return true;
         }
         return false;
     }

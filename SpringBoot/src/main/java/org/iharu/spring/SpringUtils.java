@@ -5,14 +5,20 @@
  */
 package org.iharu.spring;
 
+import org.iharu.exception.BaseException;
+import org.iharu.type.error.ErrorType;
 import org.springframework.beans.BeansException;
+import org.springframework.boot.ExitCodeGenerator;
+import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 
 /**
  *
  * @author iHaru
+ * https://www.baeldung.com/spring-boot-shutdown
  */
 @Component  
 public class SpringUtils implements ApplicationContextAware {  
@@ -29,6 +35,20 @@ public class SpringUtils implements ApplicationContextAware {
         }  
         System.out.println("\r\n---------------org.iharu.spring.SpringUtil---------------\r\n");  
     }  
+    
+    public static void shutdownApplicationContext(){
+        if(applicationContext == null)
+            throw new BaseException(ErrorType.KERNEL_ERROR, "application context is not exist");
+        ConfigurableApplicationContext ctx = (ConfigurableApplicationContext)applicationContext;
+        ctx.close();
+    }
+    
+    public static void shutdownApplicationContext(int exitCode){
+        if(applicationContext == null)
+            throw new BaseException(ErrorType.KERNEL_ERROR, "application context is not exist");
+        ConfigurableApplicationContext ctx = (ConfigurableApplicationContext)applicationContext;
+        SpringApplication.exit(ctx, () -> exitCode);
+    }
   
     //获取applicationContext  
     public static ApplicationContext getApplicationContext() {  

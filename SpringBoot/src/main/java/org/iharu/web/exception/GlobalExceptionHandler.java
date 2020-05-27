@@ -58,6 +58,8 @@ public class GlobalExceptionHandler {
             LOG.error("Web - SystemExceptionHandler left message： {}", ex.getMessage());
             return null;
         }
+        if(ex instanceof IllegalArgumentException)
+            return WebResponseUtils.GenResponse(BaseHttpStatus.ERROR, "http body must not be empty");
         if(ex instanceof HttpMessageNotReadableException)
             return WebResponseUtils.GenResponse(BaseHttpStatus.ERROR, "http body must not be empty");
         if(ex instanceof HttpMediaTypeNotAcceptableException)
@@ -66,7 +68,7 @@ public class GlobalExceptionHandler {
             return WebResponseUtils.GenResponse(BaseHttpStatus.ERROR, HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase());
         if(ex instanceof RequestRejectedException)
             return WebResponseUtils.GenResponse(BaseHttpStatus.ERROR, HttpStatus.BAD_REQUEST.getReasonPhrase());
-        LOG.error("Web - SystemExceptionHandler left message： {}{}", LINESEPARATOR, ExceptionUtils.getStackTrace(ex));
+        LOG.error("Web - SystemExceptionHandler left an exception", ex);
         return WebResponseUtils.GenResponse(BaseHttpStatus.ERROR, "SERVER ERROR");
    }
 

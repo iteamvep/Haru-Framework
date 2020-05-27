@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.PreDestroy;
 import javax.validation.constraints.NotNull;
+import org.iharu.exception.BaseException;
 import org.iharu.util.CommontUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -149,11 +150,14 @@ public class BaseWebsocketClient
                       throws Exception
                     {
                         if (session.isOpen()) {
-                          session.close();
+                            session.close();
                         }
                         if(ex instanceof EOFException)
                             return;
                         LOG.error("websocket: {} Exception while transport data", getName(), ex);
+                        if(ex instanceof BaseException){
+                            reconnectCallbackImpl.handleException(instance, ex);
+                        }
                     }
                 }, _headers, url).get());
             }

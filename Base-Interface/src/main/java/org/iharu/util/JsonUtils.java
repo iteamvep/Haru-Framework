@@ -18,7 +18,6 @@ import com.google.gson.stream.MalformedJsonException;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import static org.iharu.constant.ConstantValue.LINESEPARATOR;
 import org.slf4j.Logger;
@@ -46,10 +45,7 @@ public class JsonUtils<T> {
                 return _objectMapper.writeValueAsString(obj);
             }
         } catch (JsonProcessingException ex) {
-            LOG.error("对象{}尝试转换为JSON时发生错误。错误代码为： {}{}", 
-                    obj,
-                    LINESEPARATOR,
-                    ExceptionUtils.getStackTrace(ex));
+            LOG.error("serialization failed. {} {} {}", obj.getClass().getPackage(), obj.getClass().getName(), ex.getMessage());
         }
         return null;
     }
@@ -126,7 +122,7 @@ public class JsonUtils<T> {
         try{
             return json2object(json, typeReference, null);
         } catch (IOException ex) {
-            LOG.info(ExceptionUtils.getStackTrace(ex));
+            LOG.error("deserialization failed. {} {} {}", typeReference.getClass().getPackage(), typeReference.getClass().getName(), ex.getMessage());
             return null;
         }
     }
@@ -135,7 +131,7 @@ public class JsonUtils<T> {
         try{
             return json2object(bytes, typeReference, null);
         } catch (IOException ex) {
-            LOG.info(ExceptionUtils.getStackTrace(ex));
+            LOG.error("deserialization failed. {} {} {}", typeReference.getClass().getPackage(), typeReference.getClass().getName(), ex.getMessage());
             return null;
         }
     }
@@ -144,7 +140,7 @@ public class JsonUtils<T> {
         try{
             return json2object(json, clz, null);
         } catch (IOException ex) {
-            LOG.info(ExceptionUtils.getStackTrace(ex));
+            LOG.error("deserialization failed. {} {} {}", clz.getPackage(), clz.getName(), ex.getMessage());
             return null;
         }
     }
@@ -153,7 +149,7 @@ public class JsonUtils<T> {
         try{
             return json2object(bytes, clz, null);
         } catch (IOException ex) {
-            LOG.info(ExceptionUtils.getStackTrace(ex));
+            LOG.error("deserialization failed. {} {} {}", clz.getPackage(), clz.getName(), ex.getMessage());
             return null;
         }
     }

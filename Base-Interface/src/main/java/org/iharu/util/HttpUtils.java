@@ -89,7 +89,6 @@ public class HttpUtils {
                 .addHeader("DNT", "1")
                 .addHeader("Cache-Control", "no-cache, no-store, max-age=0, s-maxage=0, must-revalidate, proxy-revalidate")
                 .addHeader("Prama", "no-cache")
-                .addHeader(url, url)
                 .build();
         try (Response response = client.newCall(request).execute()) {
             if(response.isSuccessful() && response.body() != null)
