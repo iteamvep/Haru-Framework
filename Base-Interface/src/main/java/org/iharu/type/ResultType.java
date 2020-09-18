@@ -7,7 +7,7 @@ package org.iharu.type;
 
 /**
  *
- * @author x5171
+ * @author iHaru
  */
 public enum ResultType {
     SUCCESS(1),

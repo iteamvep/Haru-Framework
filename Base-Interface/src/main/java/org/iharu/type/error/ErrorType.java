@@ -7,7 +7,7 @@ package org.iharu.type.error;
 
 /**
  *
- * @author x5171
+ * @author iHaru
  */
 public enum ErrorType {
     HTTP_ERROR(),

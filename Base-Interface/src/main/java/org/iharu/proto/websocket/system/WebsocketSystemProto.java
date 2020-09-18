@@ -10,7 +10,6 @@ import org.iharu.type.websocket.WebsocketSystemMessageType;
 /**
  *
  * @author iHaru
- * @param <T>
  */
 public class WebsocketSystemProto<T> {
     private WebsocketSystemMessageType msg_type;

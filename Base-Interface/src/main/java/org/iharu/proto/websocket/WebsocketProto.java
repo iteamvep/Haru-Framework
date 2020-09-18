@@ -13,7 +13,6 @@ import org.iharu.util.JsonUtils;
 /**
  *
  * @author iHaru
- * @param <T>
  */
 public class WebsocketProto<T> {
     

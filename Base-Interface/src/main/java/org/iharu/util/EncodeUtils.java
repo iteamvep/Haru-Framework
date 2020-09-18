@@ -34,10 +34,10 @@ public class EncodeUtils {
     /**
      * 通过文件全名称获取编码集名称
      *
-     * @param fullFileName
-     * @param ignoreBom
-     * @return
-     * @throws Exception
+     * @param fullFileName absolute filepath
+     * @param ignoreBom ignore utf-8 bom
+     * @return Encode charset
+     * @throws Exception IOException
      */
     public static String getEncode(String fullFileName, boolean ignoreBom) throws Exception {
     	LOG.debug("fullFileName ; {}", fullFileName);
@@ -48,10 +48,10 @@ public class EncodeUtils {
     /**
      * 通过文件缓存流获取编码集名称，文件流必须为未曾
      *
-     * @param bis
-     * @param ignoreBom 是否忽略utf-8 bom
-     * @return
-     * @throws Exception
+     * @param bis input buffered input stream
+     * @param ignoreBom ignore utf-8 bom
+     * @return Encode charset
+     * @throws Exception IOException
      */
     public static String getEncode(BufferedInputStream bis, boolean ignoreBom) throws Exception {
         bis.mark(0);
@@ -83,7 +83,7 @@ public class EncodeUtils {
     /**
      * 是否是无BOM的UTF8格式，不判断常规场景，只区分无BOM UTF8和GBK
      *
-     * @param bis
+     * @param bis input buffered input stream
      * @return
      */
     private static boolean isUTF8( BufferedInputStream bis) throws Exception {
@@ -109,8 +109,8 @@ public class EncodeUtils {
     /**
      * 检测多字节，判断是否为utf8，已经读取了一个字节
      *
-     * @param bis
-     * @param bitSet
+     * @param bis input buffered input stream
+     * @param bitSet bitSet
      * @return
      */
     private static boolean checkMultiByte(BufferedInputStream bis, BitSet bitSet) throws Exception {
@@ -128,7 +128,7 @@ public class EncodeUtils {
     /**
      * 检测单字节，判断是否为utf8
      *
-     * @param b
+     * @param b byte
      * @return
      */
     private static boolean checkUtf8Byte(byte b) throws Exception {
@@ -139,7 +139,7 @@ public class EncodeUtils {
     /**
      * 检测bitSet中从开始有多少个连续的1
      *
-     * @param bitSet
+     * @param bitSet bitSet
      * @return
      */
     private static int getCountOfSequential( BitSet bitSet) {
@@ -158,7 +158,7 @@ public class EncodeUtils {
     /**
      * 将整形转为BitSet
      *
-     * @param code
+     * @param code int
      * @return
      */
     private static BitSet convert2BitSet(int code) {
@@ -177,10 +177,11 @@ public class EncodeUtils {
     /**
      * 将一指定编码的文件转换为另一编码的文件
      *
-     * @param oldFullFileName
-     * @param oldCharsetName
-     * @param newFullFileName
-     * @param newCharsetName
+     * @param oldFullFileName source file absolute filepath
+     * @param oldCharsetName source file charset
+     * @param newFullFileName output file absolute filepath
+     * @param newCharsetName output file charset
+     * @throws java.lang.Exception IOException
      */
     public static void convert(String oldFullFileName, String oldCharsetName, String newFullFileName, String newCharsetName) throws Exception {
     	LOG.info("the old file name is : {}, The oldCharsetName is : {}", oldFullFileName, oldCharsetName);
@@ -207,7 +208,7 @@ public class EncodeUtils {
  * 判断文件的编码格式 
  * @param fileName :file 
  * @return 文件编码格式 
- * @throws Exception 
+ * @throws java.lang.Exception IOException
  */  
     public static String codeString(String fileName) throws Exception{  
           

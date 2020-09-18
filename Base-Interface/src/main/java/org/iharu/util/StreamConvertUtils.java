@@ -7,7 +7,7 @@ package org.iharu.util;
 
 /**
  *
- * @author x5171
+ * @author iHaru
  */
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

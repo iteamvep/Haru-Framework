@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author x5171
+ * @author iHaru
  */
 public class ScriptUtils {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ScriptUtils.class);

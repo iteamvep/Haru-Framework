@@ -25,8 +25,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author x5171
- * @param <T>
+ * @author iHaru
  */
 public class JsonUtils<T> {
     private final static  Logger LOG = LoggerFactory.getLogger(JsonUtils.class);
